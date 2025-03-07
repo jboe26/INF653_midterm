@@ -1,5 +1,15 @@
 RewriteEngine On
+RewriteBase /
+
+# Set the default DirectoryIndex to index.php
+DirectoryIndex index.php
+
+# Skip rewriting for files and directories that exist
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} !^/api/ [NC]  # Exclude /api/ requests
+
+# Skip rewriting for requests starting with /api/
+RewriteCond %{REQUEST_URI} !^/api/ [NC]
+
+# Rewrite all other requests to index.php
 RewriteRule ^ index.php [QSA,L]
