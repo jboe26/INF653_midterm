@@ -15,17 +15,17 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install mysqli pdo pdo_mysql pdo_pgsql
 
-# Enable Apache mod_rewrite for URL routing
+# Enable Apache mod_rewrite for clean URLs
 RUN a2enmod rewrite
 
 # Copy the current directory contents into the container's web root
 COPY . /var/www/html/
 
+# Set the working directory
+WORKDIR /var/www/html/
+
 # Ensure Apache user can access all files
 RUN chown -R www-data:www-data /var/www/html/ && chmod -R 755 /var/www/html/
-
-# Add default directory index (e.g., index.php) if missing
-RUN echo "<?php phpinfo();" > /var/www/html/index.php
 
 # Expose port 80 for HTTP traffic
 EXPOSE 80
