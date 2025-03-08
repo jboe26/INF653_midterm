@@ -1,7 +1,8 @@
 <?php
-// Include necessary files (Database.php, Category.php)
-include_once 'classes/Database.php';
-include_once 'classes/Category.php';
+
+include_once __DIR__ . '/../classes/Database.php';
+include_once __DIR__ . '/../classes/Category.php';
+
 
 class CategoryController {
     private $db;

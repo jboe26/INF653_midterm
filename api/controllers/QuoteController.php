@@ -1,7 +1,8 @@
 <?php
-// Include necessary files (Database.php, Quote.php)
-include_once 'classes/Database.php';
-include_once 'classes/Quote.php';
+
+include_once __DIR__ . '/../classes/Database.php';
+include_once __DIR__ . '/../classes/Quote.php';
+
 
 class QuoteController {
     private $db;

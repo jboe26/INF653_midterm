@@ -1,7 +1,8 @@
 <?php
-// Include necessary files (Database.php, Author.php)
-include_once 'classes/Database.php';
-include_once 'classes/Author.php';
+
+include_once __DIR__ . '/../classes/Database.php';
+include_once __DIR__ . '/../classes/Author.php';
+
 
 class AuthorController {
     private $db;
