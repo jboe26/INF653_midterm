@@ -15,8 +15,8 @@ class Database {
             $host = $db['host'];
             $port = $db['port'];
             $db_name = ltrim($db['path'], '/');
-            $username = $db['user'];
-            $password = $db['pass'];
+            $username = 'postgres'; 
+            $password = 'postgres'; 
 
             $this->conn = new PDO(
                 "pgsql:host=$host;port=$port;dbname=$db_name",
