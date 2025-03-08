@@ -7,7 +7,11 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_pgsql \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Enable Apache mod_rewrite (optional, helpful for clean URLs or API routing)
+# Set the default ServerName to suppress warnings
+RUN echo "ServerName localhost" >> /etc/apache2/conf-available/servername.conf && \
+    a2enconf servername
+
+# Enable Apache mod_rewrite for clean URLs
 RUN a2enmod rewrite
 
 # Copy your project files into the container
