@@ -11,15 +11,19 @@ include_once __DIR__ . '/api/controllers/AuthorController.php';   // Author cont
 include_once __DIR__ . '/api/controllers/CategoryController.php'; // Category controller
 
 // Initialize the database connection
-$db = new Database();
-$conn = $db->getConnection();
+try {
+    $db = new Database();
+    $conn = $db->getConnection();
 
-// Check the database connection
-if (!$conn) {
-    die(json_encode([
+    if (!$conn) {
+        throw new Exception("Failed to connect to the database.");
+    }
+} catch (Exception $e) {
+    echo json_encode([
         "status" => "error",
-        "message" => "Failed to connect to the database."
-    ]));
+        "message" => $e->getMessage()
+    ]);
+    exit();
 }
 
 // Instantiate controllers
@@ -28,8 +32,8 @@ $authorController = new AuthorController($conn);
 $categoryController = new CategoryController($conn);
 
 // Handle HTTP requests
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    try {
+try {
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // Example: Fetch quotes from the database
         $quotes = $quoteController->fetchQuotes();
 
@@ -38,18 +42,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             "status" => "success",
             "data" => $quotes
         ]);
-    } catch (Exception $e) {
-        // Handle errors gracefully
+    } else {
+        // Return an error for unsupported request methods
         echo json_encode([
             "status" => "error",
-            "message" => $e->getMessage()
+            "message" => "Unsupported request method."
         ]);
     }
-} else {
-    // Return an error for unsupported request methods
+} catch (Exception $e) {
+    // Handle errors gracefully
     echo json_encode([
         "status" => "error",
-        "message" => "Unsupported request method."
+        "message" => $e->getMessage()
     ]);
 }
 ?>
