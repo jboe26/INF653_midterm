@@ -29,8 +29,8 @@ class Database {
                 $host = 'localhost';
                 $port = '5432';
                 $db_name = 'quotesdb'; // Local database name
-                $username = 'your-local-username'; // Replace with your local username
-                $password = 'your-local-password'; // Replace with your local password
+                $username = 'postgres'; 
+                $password = 'postgres'; 
             }
 
             // Establish the connection
