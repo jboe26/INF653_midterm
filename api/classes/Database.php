@@ -6,17 +6,11 @@ class Database {
         $this->conn = null;
 
         try {
-            $url = getenv('DATABASE_URL');
-            if (!$url) {
-                throw new Exception("Environment variable DATABASE_URL not set.");
-            }
-
-            $db = parse_url($url);
-            $host = $db['host'];
-            $port = $db['port'];
-            $db_name = ltrim($db['path'], '/');
-            $username = 'postgres'; 
-            $password = 'postgres'; 
+            $host = 'localhost';       // Local environment
+            $port = '5432';            // Default port for PostgreSQL
+            $db_name = 'quotesdb';     // Your local database name
+            $username = 'postgres';    // Your local username
+            $password = 'postgres';    // Your local password
 
             $this->conn = new PDO(
                 "pgsql:host=$host;port=$port;dbname=$db_name",
