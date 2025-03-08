@@ -30,7 +30,7 @@ class Database {
                 $port = '5432';
                 $db_name = 'quotesdb'; // Local database name
                 $username = 'postgres'; 
-                $password = 'postgres'; 
+                $password = 'password'; 
             }
 
             // Establish the connection
