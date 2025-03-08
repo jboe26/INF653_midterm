@@ -27,7 +27,7 @@ class Quote {
     }
 
     // Read one quote by ID
-    public function readOne(){
+    public function readOne() {
         $query = "SELECT q.id, q.quote, a.author, c.category 
                   FROM " . $this->table_name . " q 
                   LEFT JOIN authors a ON q.author_id = a.id 
@@ -37,18 +37,15 @@ class Quote {
         $stmt->bindParam(1, $this->id);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        // Check if $row is not empty before accessing its elements
+    
         if ($row) {
             $this->quote = $row['quote'];
-            $this->author_id = $row['author'];  // Assuming 'author' is the author's id
-            $this->category_id = $row['category'];  // Assuming 'category' is the category's id
+            $this->author_id = $row['author'];
+            $this->category_id = $row['category'];
         } else {
-            // Handle the case where no quote is found
-            $this->quote = null;
-            $this->author_id = null;
-            $this->category_id = null;
+            echo json_encode(["message" => "No Quotes Found"]);
         }
-    }
+    }    
 
     // Read quotes by author ID
     public function readByAuthor($author_id) {

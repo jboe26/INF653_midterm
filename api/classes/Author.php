@@ -24,12 +24,14 @@ class Author {
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $this->id);
         $stmt->execute();
-
+    
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
             $this->author = $row['author'];
+        } else {
+            echo json_encode(["message" => "author_id Not Found"]);
         }
-    }
+    }    
 
     // Create an author
     public function create() {
