@@ -1,7 +1,7 @@
 <?php
 // Include the necessary files
-require_once 'api/classes/Database.php';  // Adjust path if needed
-require_once 'api/controllers/QuoteController.php';  // Adjust path if needed
+include_once __DIR__ . '/../classes/Database.php';
+include_once __DIR__ . '/../classes/Quote.php';
 
 // Initialize the database connection
 $db = new Database();
