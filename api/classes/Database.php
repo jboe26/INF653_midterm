@@ -6,12 +6,25 @@ class Database {
         $this->conn = null;
 
         try {
-            $host = 'localhost';       // Local environment
-            $port = '5432';            // Default port for PostgreSQL
-            $db_name = 'quotesdb';     // Your local database name
-            $username = 'postgres';    // Your local username
-            $password = 'postgres';    // Your local password
+            // Use Render's environment variable
+            $url = getenv('DATABASE_URL');
+            if ($url) {
+                $db = parse_url($url);
+                $host = $db['host'];
+                $port = $db['port'];
+                $db_name = ltrim($db['path'], '/'); // Trim leading slash from database name
+                $username = $db['user'];
+                $password = $db['pass'];
+            } else {
+                // Local Development Fallback
+                $host = 'localhost';      
+                $port = '5432';            
+                $db_name = 'quotesdb';     
+                $username = 'postgres';    
+                $password = 'postgres';    
+            }
 
+            // Connect to PostgreSQL
             $this->conn = new PDO(
                 "pgsql:host=$host;port=$port;dbname=$db_name",
                 $username,
