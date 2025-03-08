@@ -1,7 +1,14 @@
 <?php
-// Include the necessary files
-include_once __DIR__ . '/../classes/Database.php';
-include_once __DIR__ . '/../classes/Quote.php';
+// Include all necessary class files
+include_once __DIR__ . '/api/classes/Database.php';       // Database connection class
+include_once __DIR__ . '/api/classes/Quote.php';          // Quote model
+include_once __DIR__ . '/api/classes/Author.php';         // Author model
+include_once __DIR__ . '/api/classes/Category.php';       // Category model
+
+// Include all necessary controller files
+include_once __DIR__ . '/api/controllers/QuoteController.php';    // Quote controller
+include_once __DIR__ . '/api/controllers/AuthorController.php';   // Author controller
+include_once __DIR__ . '/api/controllers/CategoryController.php'; // Category controller
 
 // Initialize the database connection
 $db = new Database();
@@ -15,13 +22,15 @@ if (!$conn) {
     ]));
 }
 
-// Initialize the QuoteController with the database connection
+// Instantiate controllers
 $quoteController = new QuoteController($conn);
+$authorController = new AuthorController($conn);
+$categoryController = new CategoryController($conn);
 
-// Handle requests (e.g., GET)
+// Handle HTTP requests
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try {
-        // Fetch quotes from the database
+        // Example: Fetch quotes from the database
         $quotes = $quoteController->fetchQuotes();
 
         // Return the quotes as JSON
