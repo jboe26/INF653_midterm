@@ -14,19 +14,22 @@ class QuoteController {
     }
 
     public function fetchQuotes() {
-        $stmt = $this->quote->read();
+        $result = $this->quote->read(); // $result is now an array
+        if ($result) {
+            throw new Exception("Failed to fetch quotes from the database.");
+        }
+
         $quotes = [];
-    
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $quote_item = array(
+        foreach ($result as $row) {
+            $quote_item = [
                 "id" => $row['id'],
                 "quote" => $row['quote'],
                 "author" => $row['author'],
                 "category" => $row['category']
-            );
+            ];
             $quotes[] = $quote_item;
         }
-    
+
         return $quotes;
     }
     

@@ -25,7 +25,7 @@ class Quote {
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC); // Convert data directly to an array
+            return $stmt; // return the PDOStatement object
         } catch (PDOException $e) {
             error_log("Database error: " . $e->getMessage());
             return false;
