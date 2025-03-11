@@ -18,7 +18,7 @@ class Quote {
     // Read all quotes
     public function read() {
         try {
-            $query = "SELECT q.id, q.quote, a.name AS author, c.name AS category 
+            $query = "SELECT q.id, q.quote, a.author AS author, c.category AS category 
                       FROM " . $this->table_name . " q 
                       LEFT JOIN authors a ON q.author_id = a.id 
                       LEFT JOIN categories c ON q.category_id = c.id";
