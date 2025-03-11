@@ -13,6 +13,23 @@ class QuoteController {
         $this->quote = new Quote($db);
     }
 
+    public function fetchQuotes() {
+        $stmt = $this->quote->read();
+        $quotes = [];
+    
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $quote_item = array(
+                "id" => $row['id'],
+                "quote" => $row['quote'],
+                "author" => $row['author'],
+                "category" => $row['category']
+            );
+            $quotes[] = $quote_item;
+        }
+    
+        return $quotes;
+    }
+    
     public function handleRequest($method, $params) {
         switch ($method) {
             case 'GET':
