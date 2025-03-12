@@ -14,11 +14,13 @@ class QuoteController {
     }
 
     public function fetchQuotes() {
-        $result = $this->quote->read(); 
+        $result = $this->quote->read();
     
         if (!is_array($result) || count($result) === 0) {
             error_log("Warning: No valid data fetched from database.");
-            return ["status" => "error", "message" => "No quotes available."];
+            http_response_code(404); // Not Found
+            echo json_encode(["message" => "No Quotes Found"]);
+            return;
         }
     
         $quotes = [];
@@ -32,10 +34,9 @@ class QuoteController {
             $quotes[] = $quote_item;
         }
     
-        return ["status" => "success", "data" => $quotes];
+        http_response_code(200); // OK
+        echo json_encode(["status" => "success", "data" => $quotes]);
     }
-    
-    
     
     public function handleRequest($method, $params) {
         switch ($method) {

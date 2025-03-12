@@ -22,27 +22,26 @@ class Quote {
                       FROM " . $this->table_name . " q 
                       LEFT JOIN authors a ON q.author_id = a.id 
                       LEFT JOIN categories c ON q.category_id = c.id";
-
+    
             error_log("Executing SQL: " . $query);
-
+    
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
-
+    
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
             error_log("Query results: " . json_encode($results));
-
-            return $stmt; // return the PDOStatement object
-            
+    
+            return $results; // Return the array of results
         } catch (PDOException $e) {
             error_log("Database error: " . $e->getMessage());
             return false;
         }
     }
-
+    
     // Read one quote by ID
     public function readOne() {
         try {
-            $query = "SELECT q.id, q.quote, a.name AS author, c.name AS category 
+            $query = "SELECT q.id, q.quote, a.author AS author, c.category AS category 
                       FROM " . $this->table_name . " q 
                       LEFT JOIN authors a ON q.author_id = a.id 
                       LEFT JOIN categories c ON q.category_id = c.id 
@@ -61,6 +60,11 @@ class Quote {
     // Create a quote
     public function create() {
         try {
+            if (empty($this->quote) || empty($this->author_id) || empty($this->category_id)) {
+                error_log("Validation error: Missing required fields.");
+                return false;
+            }
+            
             $query = "INSERT INTO " . $this->table_name . " 
                       SET quote=:quote, author_id=:author_id, category_id=:category_id";
             $stmt = $this->conn->prepare($query);
@@ -129,7 +133,7 @@ class Quote {
     // Read a random quote
     public function readRandom() {
         try {
-            $query = "SELECT q.id, q.quote, a.name AS author, c.name AS category 
+            $query = "SELECT q.id, q.quote, a.author AS author, c.category AS category 
                       FROM " . $this->table_name . " q 
                       LEFT JOIN authors a ON q.author_id = a.id 
                       LEFT JOIN categories c ON q.category_id = c.id 
