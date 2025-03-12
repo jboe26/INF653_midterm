@@ -1,46 +1,57 @@
-# Quotes API
+### ### Quotes API
+### ### Joshua Boepple INF653 Back End Web Development - Midterm
 
-Joshua Boepple
-INF653 Back End Web Development - Midterm
+### ### This RESTful API manages quotes, authors, and categories using PHP and PostgreSQL.
 
-This project is a RESTful API designed to manage quotes, authors, and categories. It utilizes PHP and PostgreSQL to provide a backend for accessing and manipulating quote data.
+### ### Deployed Project: [\[Your Deployed Project Link\]](https://quotedb-api.onrender.com/)
 
-Deployed Project: [Your Deployed Project Link]
-
-## API Endpoints
+### ### API Overview
 
 ### Quotes
+GET /quotes - Fetch all quotes.
 
-* **GET /quotes:** Retrieves all quotes.
-* **GET /quotes/{id}:** Retrieves a single quote by ID.
-* **POST /quotes:** Creates a new quote.
-* **PUT /quotes:** Updates an existing quote.
-* **DELETE /quotes:** Deletes a quote.
+GET /quotes/{id} - Fetch a specific quote by ID.
+
+POST /quotes - Add a new quote.
+
+PUT /quotes - Update an existing quote.
+
+DELETE /quotes - Remove a quote.
 
 ### Authors
+GET /authors - Fetch all authors.
 
-* **GET /authors:** Retrieves all authors.
-* **GET /authors/{id}:** Retrieves a single author by ID.
-* **POST /authors:** Creates a new author.
-* **PUT /authors:** Updates an existing author.
-* **DELETE /authors:** Deletes an author.
+GET /authors/{id} - Fetch a specific author by ID.
+
+POST /authors - Add a new author.
+
+PUT /authors - Update an existing author.
+
+DELETE /authors - Remove an author.
 
 ### Categories
+GET /categories - Fetch all categories.
 
-* **GET /categories:** Retrieves all categories.
-* **GET /categories/{id}:** Retrieves a single category by ID.
-* **POST /categories:** Creates a new category.
-* **PUT /categories:** Updates an existing category.
-* **DELETE /categories:** Deletes a category.
+GET /categories/{id} - Fetch a specific category by ID.
 
-## Database
+POST /categories - Add a new category.
 
-This project utilizes PostgreSQL for data storage.
+PUT /categories - Update an existing category.
 
-## Usage
+DELETE /categories - Remove a category.
 
-You can use tools like Postman or `curl` to interact with the API.
+### Database
+Powered by PostgreSQL for secure data storage and relational management.
 
-## Error Handling
+### Usage
+Interact with the API using tools like Postman or curl to send requests and view responses.
 
-The API returns appropriate HTTP status codes and JSON error messages for invalid requests.
+### Error Handling
+API responses include clear HTTP status codes and JSON error messages for invalid inputs or requests.
+
+### Why This Works
+Organized endpoints under each resource (Quotes, Authors, Categories) make the structure clearer.
+
+Grouping usage and error handling under Usage keeps it concise.
+
+Consistent formatting ensures readability.
