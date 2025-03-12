@@ -3,7 +3,6 @@
 include_once __DIR__ . '/../classes/Database.php';
 include_once __DIR__ . '/../classes/Quote.php';
 
-
 class QuoteController {
     private $db;
     private $quote;
@@ -15,95 +14,61 @@ class QuoteController {
 
     public function fetchQuotes() {
         $result = $this->quote->read();
-    
+
         if (!is_array($result) || count($result) === 0) {
             http_response_code(404); // Not Found
             echo json_encode(["message" => "No Quotes Found"]);
-            return; // Ensure the script stops here
+            exit; // Ensure no further execution
         }
-    
+
         http_response_code(200); // OK
         echo json_encode(["status" => "success", "data" => $result]);
-        return; // Ensure only one response is sent
+        exit; // Ensure only one response is sent
     }
-    
-    
+
     public function handleRequest($method, $params) {
         switch ($method) {
             case 'GET':
                 $this->handleGet($params);
-                break;
+                return; // Ensure script stops here
             case 'POST':
                 $this->handlePost();
-                break;
+                return;
             case 'PUT':
                 $this->handlePut();
-                break;
+                return;
             case 'DELETE':
                 $this->handleDelete();
-                break;
+                return;
             default:
                 http_response_code(405); // Method Not Allowed
                 echo json_encode(['message' => 'Method not allowed.']);
+                return;
         }
     }
 
     private function handleGet($params) {
         if (isset($params[0])) { // Check if an ID is provided
             $this->quote->id = $params[0];
-            $this->quote->readOne();
+            $result = $this->quote->readOne();
 
-            if ($this->quote->quote != null) {
-                $quote_arr = array(
-                    "id" => $this->quote->id,
-                    "quote" => $this->quote->quote,
-                    "author" => $this->quote->author_id, // Assuming this is the author's name now
-                    "category" => $this->quote->category_id // Assuming this is the category name now
-                );
+            if ($result) {
                 http_response_code(200);
-                echo json_encode($quote_arr);
+                echo json_encode($result);
             } else {
                 http_response_code(404);
-                echo json_encode(array("message" => "Quote Not Found."));
+                echo json_encode(["message" => "Quote Not Found."]);
             }
-        } else { // No ID provided, get all quotes
-            $stmt = $this->quote->read();
-            $num = $stmt->rowCount();
-
-            if ($num > 0) {
-                $quotes_arr = array();
-                $quotes_arr["quotes"] = array();
-
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    // Extract data correctly
-                    $quote_item = array(
-                        "id" => $row['id'],
-                        "quote" => $row['quote'],
-                        "author" => $row['author'],
-                        "category" => $row['category']
-                    );
-                    array_push($quotes_arr["quotes"], $quote_item);
-                }
-
-                http_response_code(200);
-                echo json_encode($quotes_arr);
-            } else {
-                http_response_code(404);
-                echo json_encode(array("message" => "No Quotes Found."));
-            }
+        } else {
+            $this->fetchQuotes(); // Reuse the fetchQuotes method
         }
+        exit; // Terminate script to prevent extra output
     }
 
     private function handlePost() {
         $data = json_decode(file_get_contents("php://input"));
 
-        // Validate required parameters
-        if (
-            !empty($data->quote) && 
-            !empty($data->author_id) && 
-            !empty($data->category_id)
-        ) {
-            // Check if author_id and category_id exist
+        if (!empty($data->quote) && !empty($data->author_id) && !empty($data->category_id)) {
             $authorExists = $this->authorExists($data->author_id);
             $categoryExists = $this->categoryExists($data->category_id);
 
@@ -114,10 +79,12 @@ class QuoteController {
 
                 if ($this->quote->create()) {
                     http_response_code(201); // Created
-                    echo json_encode(array("message" => "Quote was created."));
+                    echo json_encode(["message" => "Quote was created."]);
+                    exit;
                 } else {
                     http_response_code(503); // Service Unavailable
-                    echo json_encode(array("message" => "Unable to create quote."));
+                    echo json_encode(["message" => "Unable to create quote."]);
+                    exit;
                 }
             } else {
                 http_response_code(400); // Bad Request
@@ -128,11 +95,13 @@ class QuoteController {
                 if (!$categoryExists) {
                     $message .= "category_id Not Found.";
                 }
-                echo json_encode(array("message" => $message));
+                echo json_encode(["message" => $message]);
+                exit;
             }
         } else {
             http_response_code(400); // Bad Request
-            echo json_encode(array("message" => "Missing Required Parameters"));
+            echo json_encode(["message" => "Missing Required Parameters"]);
+            exit;
         }
     }
 
@@ -147,14 +116,17 @@ class QuoteController {
 
             if ($this->quote->update()) {
                 http_response_code(200); // OK
-                echo json_encode(array("message" => "Quote was updated."));
+                echo json_encode(["message" => "Quote was updated."]);
+                exit;
             } else {
                 http_response_code(503); // Service Unavailable
-                echo json_encode(array("message" => "Unable to update quote."));
+                echo json_encode(["message" => "Unable to update quote."]);
+                exit;
             }
         } else {
             http_response_code(400); // Bad Request
-            echo json_encode(array("message" => "Unable to update quote. Data is incomplete."));
+            echo json_encode(["message" => "Unable to update quote. Data is incomplete."]);
+            exit;
         }
     }
 
@@ -166,36 +138,35 @@ class QuoteController {
 
             if ($this->quote->delete()) {
                 http_response_code(200); // OK
-                echo json_encode(array("message" => "Quote was deleted."));
+                echo json_encode(["message" => "Quote was deleted."]);
+                exit;
             } else {
                 http_response_code(503); // Service Unavailable
-                echo json_encode(array("message" => "Unable to delete quote."));
+                echo json_encode(["message" => "Unable to delete quote."]);
+                exit;
             }
         } else {
             http_response_code(400); // Bad Request
-            echo json_encode(array("message" => "Unable to delete quote. Data is incomplete."));
+            echo json_encode(["message" => "Unable to delete quote. Data is incomplete."]);
+            exit;
         }
     }
 
-    private function processGetResult($stmt){
-        // ... (processGetResult code from previous responses)
+    // Helper functions to check if author and category exist
+    private function authorExists($author_id) {
+        $query = "SELECT id FROM authors WHERE id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(1, $author_id);
+        $stmt->execute();
+        return $stmt->rowCount() > 0;
     }
-    
- // Helper functions to check if author and category exist
- private function authorExists($author_id) {
-    $query = "SELECT id FROM authors WHERE id = ?";
-    $stmt = $this->db->prepare($query);
-    $stmt->bindParam(1, $author_id);
-    $stmt->execute();
-    return $stmt->rowCount() > 0;
-}
 
-private function categoryExists($category_id) {
-    $query = "SELECT id FROM categories WHERE id = ?";
-    $stmt = $this->db->prepare($query);
-    $stmt->bindParam(1, $category_id);
-    $stmt->execute();
-    return $stmt->rowCount() > 0;
-}
+    private function categoryExists($category_id) {
+        $query = "SELECT id FROM categories WHERE id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(1, $category_id);
+        $stmt->execute();
+        return $stmt->rowCount() > 0;
+    }
 }
 ?>
