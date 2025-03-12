@@ -22,10 +22,17 @@ class Quote {
                       FROM " . $this->table_name . " q 
                       LEFT JOIN authors a ON q.author_id = a.id 
                       LEFT JOIN categories c ON q.category_id = c.id";
+
+            error_log("Executing SQL: " . $query);
+
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
 
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("Query results: " . json_encode($results));
+
             return $stmt; // return the PDOStatement object
+            
         } catch (PDOException $e) {
             error_log("Database error: " . $e->getMessage());
             return false;
