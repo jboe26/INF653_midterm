@@ -28,7 +28,7 @@ echo "
             padding: 0;
         }
         header {
-            background-color: #4CAF50;
+            background-color: #A9A9A9;
             color: white;
             padding: 20px 0;
         }
@@ -52,9 +52,9 @@ echo "
         <p>Welcome to the Quotes API! Use this API to manage quotes, authors, and categories.</p>
         <p>Available Endpoints:</p>
         <ul>
-            <li><a href='/api/quotes/'>/api/quotes</a> - Get all quotes</li>
-            <li><a href='/api/authors/'>/api/authors</a> - Get all authors</li>
-            <li><a href='/api/categories/'>/api/categories</a> - Get all categories</li>
+            <p><a href='/api/quotes/'>/api/quotes</a> - Get all quotes</p>
+            <p><a href='/api/authors/'>/api/authors</a> - Get all authors</p>
+            <p><a href='/api/categories/'>/api/categories</a> - Get all categories</p>
         </ul>
         <p>For more details, check the <a href='https://github.com/jboe26/INF653_midterm'>GitHub Repository</a>.</p>
     </main>
