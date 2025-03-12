@@ -34,20 +34,34 @@ class CategoryController {
     }
 
     private function handleGet($params) {
+        // Debug log for tracking
+        error_log("DEBUG: Fetching categories with ID = " . (isset($params['id']) ? $params['id'] : "ALL"));
+    
+        // If ID is provided, fetch a single category
         if (isset($params['id'])) {
+            // Validate that ID is numeric
+            if (!is_numeric($params['id'])) {
+                http_response_code(400); // Bad Request
+                echo json_encode(["message" => "Invalid or missing id parameter."]);
+                return;
+            }
+    
             $this->category->id = $params['id'];
             $this->category->readOne();
+    
             if ($this->category->category != null) {
                 $category_arr = array(
                     "id" => $this->category->id,
                     "category" => $this->category->category
                 );
-                http_response_code(200);
+                http_response_code(200); // OK
                 echo json_encode($category_arr);
             } else {
-                http_response_code(404);
-                echo json_encode(array("message" => "Category Not Found."));
+                http_response_code(404); // Not Found
+                echo json_encode(["message" => "Category Not Found."]);
             }
+    
+        // If no ID is provided, fetch all categories
         } else {
             $stmt = $this->category->read();
             $num = $stmt->rowCount();
@@ -57,21 +71,21 @@ class CategoryController {
                 $category_arr["data"] = array();
     
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    extract($row);
                     $category_item = array(
-                        "id" => $id,
-                        "category" => $category
+                        "id" => $row['id'],
+                        "category" => $row['category']
                     );
                     array_push($category_arr["data"], $category_item);
                 }
-                http_response_code(200);
+                http_response_code(200); // OK
                 echo json_encode($category_arr);
             } else {
-                http_response_code(404);
-                echo json_encode(array("message" => "No Categories Found."));
+                http_response_code(404); // Not Found
+                echo json_encode(["message" => "No Categories Found."]);
             }
         }
     }
+    
 
     private function handlePost() {
         $data = json_decode(file_get_contents("php://input"));

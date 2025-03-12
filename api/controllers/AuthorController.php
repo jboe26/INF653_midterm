@@ -34,20 +34,34 @@ class AuthorController {
     }
 
     private function handleGet($params) {
+        // Debug log for tracking
+        error_log("DEBUG: Fetching authors with ID = " . (isset($params['id']) ? $params['id'] : "ALL"));
+    
+        // If ID is provided, fetch a single author
         if (isset($params['id'])) {
+            // Validate that ID is numeric
+            if (!is_numeric($params['id'])) {
+                http_response_code(400); // Bad Request
+                echo json_encode(["message" => "Invalid or missing id parameter."]);
+                return;
+            }
+    
             $this->author->id = $params['id'];
             $this->author->readOne();
+    
             if ($this->author->author != null) {
                 $author_arr = array(
                     "id" => $this->author->id,
                     "author" => $this->author->author
                 );
-                http_response_code(200);
+                http_response_code(200); // OK
                 echo json_encode($author_arr);
             } else {
-                http_response_code(404);
-                echo json_encode(array("message" => "Author Not Found."));
+                http_response_code(404); // Not Found
+                echo json_encode(["message" => "Author Not Found."]);
             }
+    
+        // If no ID is provided, fetch all authors
         } else {
             $stmt = $this->author->read();
             $num = $stmt->rowCount();
@@ -57,21 +71,21 @@ class AuthorController {
                 $authors_arr["data"] = array();
     
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    extract($row);
                     $author_item = array(
-                        "id" => $id,
-                        "author" => $author
+                        "id" => $row['id'],
+                        "author" => $row['author']
                     );
                     array_push($authors_arr["data"], $author_item);
                 }
-                http_response_code(200);
+                http_response_code(200); // OK
                 echo json_encode($authors_arr);
             } else {
-                http_response_code(404);
-                echo json_encode(array("message" => "No Authors Found."));
+                http_response_code(404); // Not Found
+                echo json_encode(["message" => "No Authors Found."]);
             }
         }
     }
+    
 
     private function handlePost() {
         $data = json_decode(file_get_contents("php://input"));

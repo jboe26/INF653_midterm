@@ -8,8 +8,9 @@ DirectoryIndex index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
-# Skip rewriting for requests starting with /api/
-RewriteCond %{REQUEST_URI} !^/api/ [NC]
+# If the request starts with /api/, route it to api/index.php
+RewriteCond %{REQUEST_URI} ^/api/ [NC]
+RewriteRule ^api/(.*)$ api/index.php [QSA,L]
 
-# Rewrite all other requests to index.php
+# Rewrite all other requests to index.php (non-API routes)
 RewriteRule ^ index.php [QSA,L]
