@@ -17,26 +17,16 @@ class QuoteController {
         $result = $this->quote->read();
     
         if (!is_array($result) || count($result) === 0) {
-            error_log("Warning: No valid data fetched from database.");
             http_response_code(404); // Not Found
             echo json_encode(["message" => "No Quotes Found"]);
-            return;
-        }
-    
-        $quotes = [];
-        foreach ($result as $row) {
-            $quote_item = [
-                "id" => $row['id'],
-                "quote" => $row['quote'],
-                "author" => $row['author'],
-                "category" => $row['category']
-            ];
-            $quotes[] = $quote_item;
+            return; // Ensure the script stops here
         }
     
         http_response_code(200); // OK
-        echo json_encode(["status" => "success", "data" => $quotes]);
+        echo json_encode(["status" => "success", "data" => $result]);
+        return; // Ensure only one response is sent
     }
+    
     
     public function handleRequest($method, $params) {
         switch ($method) {
