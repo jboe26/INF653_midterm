@@ -14,11 +14,12 @@ class QuoteController {
     }
 
     public function fetchQuotes() {
-        $result = $this->quote->read(); // $result is now an array
-        if ($result) {
-            throw new Exception("Failed to fetch quotes from the database.");
+        $result = $this->quote->read();
+    
+        if (!$result || count($result) === 0) {
+            return ["status" => "error", "message" => "No quotes available."];
         }
-
+    
         $quotes = [];
         foreach ($result as $row) {
             $quote_item = [
@@ -29,9 +30,10 @@ class QuoteController {
             ];
             $quotes[] = $quote_item;
         }
-
-        return $quotes;
+    
+        return ["status" => "success", "data" => $quotes];
     }
+    
     
     public function handleRequest($method, $params) {
         switch ($method) {
