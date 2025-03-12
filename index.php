@@ -49,7 +49,8 @@ echo "
         <h1>Quotes API</h1>
     </header>
     <main>
-        <p>Welcome to the Quotes API! Use this API to manage quotes, authors, and categories.</p>
+        <p>INF653 Back End Web Development - Midterm Project</p>
+        <p>Josh Boepple</p>
         <p>Available Endpoints:</p>
         <ul>
             <p><a href='/api/quotes/'>/api/quotes</a> - Get all quotes</p>
