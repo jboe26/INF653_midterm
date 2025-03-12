@@ -16,10 +16,11 @@ class QuoteController {
     public function fetchQuotes() {
         $result = $this->quote->read();
     
-        if (!$result || count($result) === 0) {
+        if (!$is_array($result) || count($result) === 0) {
+            error_log("Warning: No valid data fetched from database.");
             return ["status" => "error", "message" => "No quotes available."];
         }
-    
+        
         $quotes = [];
         foreach ($result as $row) {
             $quote_item = [
