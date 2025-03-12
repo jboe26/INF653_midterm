@@ -1,15 +1,15 @@
 <?php
-// Allow cross-origin requests and set JSON response header
+// Allow cross-origin requests and JSON response headers
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 // Parse the requested URL
 $request_uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-$endpoint = isset($request_uri[2]) ? $request_uri[2] : null;
+$endpoint = isset($request_uri[2]) ? $request_uri[2] : 'quotes'; // Default to 'quotes'
 $method = $_SERVER['REQUEST_METHOD'];
 
 // Validate and route to the appropriate controller
-if (isset($endpoint) && in_array($endpoint, ['quotes', 'authors', 'categories'])) {
+if (in_array($endpoint, ['quotes', 'authors', 'categories'])) {
     // Include necessary files
     include_once 'classes/Database.php';
     include_once 'classes/Quote.php';
