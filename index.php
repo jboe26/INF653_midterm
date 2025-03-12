@@ -56,7 +56,6 @@ echo "
             <p><a href='/api/authors/'>/api/authors</a> - Get all authors</p>
             <p><a href='/api/categories/'>/api/categories</a> - Get all categories</p>
         </ul>
-        <p>For more details, check the <a href='https://github.com/jboe26/INF653_midterm'>GitHub Repository</a>.</p>
     </main>
 </body>
 </html>

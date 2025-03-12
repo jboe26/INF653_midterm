@@ -64,27 +64,38 @@ class Quote {
                 error_log("Validation error: Missing required fields.");
                 return false;
             }
-            
+    
             $query = "INSERT INTO " . $this->table_name . " 
                       SET quote=:quote, author_id=:author_id, category_id=:category_id";
             $stmt = $this->conn->prepare($query);
-
+    
             // Sanitize inputs
             $this->quote = htmlspecialchars(strip_tags($this->quote));
             $this->author_id = htmlspecialchars(strip_tags($this->author_id));
             $this->category_id = htmlspecialchars(strip_tags($this->category_id));
-
+    
             // Bind parameters
             $stmt->bindParam(":quote", $this->quote);
             $stmt->bindParam(":author_id", $this->author_id);
             $stmt->bindParam(":category_id", $this->category_id);
-
-            return $stmt->execute();
+    
+            // Execute the query
+            $result = $stmt->execute();
+    
+            // Log success or failure
+            if ($result) {
+                error_log("Quote created successfully: " . $this->quote);
+            } else {
+                error_log("Failed to create quote: " . json_encode($stmt->errorInfo()));
+            }
+    
+            return $result;
         } catch (PDOException $e) {
             error_log("Database error: " . $e->getMessage());
             return false;
         }
     }
+    
 
     // Update a quote
     public function update() {
