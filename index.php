@@ -26,7 +26,14 @@ if ($request_uri[0] === 'api') {
     // API Routing Logic
     header('Content-Type: application/json');
 
-    $endpoint = isset($request_uri[1]) ? $request_uri[1] : 'quotes';
+    // Add this check for /api/
+    if (!isset($request_uri[1])) {
+        http_response_code(200);
+        echo json_encode(["message" => "Welcome to the QuoteDB API. Available endpoints: /api/quotes, /api/authors, /api/categories"]);
+        exit;
+    }
+
+    $endpoint = $request_uri[1];
 
     if (in_array($endpoint, ['quotes', 'authors', 'categories'])) {
         include_once 'api/classes/Database.php';
