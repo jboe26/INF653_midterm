@@ -10,10 +10,19 @@ if ($method === 'OPTIONS') {
     exit();
 }
 
+error_log("SERVER REQUEST URI: " . $_SERVER['REQUEST_URI']);
+
 $request_uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
 
-// Check if the URL starts with /api
-if (isset($request_uri[0]) && $request_uri[0] === 'api') {
+error_log("Raw REQUEST_URI: " . $_SERVER['REQUEST_URI']);
+error_log("Parsed REQUEST_URI: " . print_r($request_uri, true));
+error_log("REQUEST_URI[0]: " . (isset($request_uri[0]) ? $request_uri[0] : 'Not Set'));
+error_log("REQUEST_URI[1]: " . (isset($request_uri[1]) ? $request_uri[1] : 'Not Set'));
+
+// Simplified if condition for testing
+if ($request_uri[0] === 'api') {
+    error_log("API Routing Triggered");
+
     // API Routing Logic
     header('Content-Type: application/json');
 
@@ -54,6 +63,8 @@ if (isset($request_uri[0]) && $request_uri[0] === 'api') {
     }
 
 } else {
+    error_log("HTML Routing Triggered");
+
     // Front-End HTML Logic
     header('Content-Type: text/html; charset=UTF-8');
     echo "
