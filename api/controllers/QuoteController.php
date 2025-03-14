@@ -12,146 +12,96 @@ class QuoteController {
         $this->quote = new Quote($db);
     }
 
-    // Fetch all quotes
-    public function fetchQuotes() {
-        $result = $this->quote->read();
-        $num = $result->rowCount();
-
-        if ($num > 0) {
-            $quotes_arr = [];
-            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                $quotes_arr[] = [
-                    "id" => $row["id"],
-                    "quote" => $row["quote"],
-                    "author" => $row["author"],
-                    "category" => $row["category"]
-                ];
-            }
-            http_response_code(200);
-            echo json_encode($quotes_arr);
-            return;
-        }
-
-        http_response_code(404);
-        echo json_encode(["message" => "No Quotes Found."]);
-    }
-
-    // Handle incoming requests
     public function handleRequest($method, $params) {
         switch ($method) {
             case 'GET':
                 $this->handleGet($params);
-                return;
+                break;
             case 'POST':
                 $this->handlePost();
-                return;
+                break;
             case 'PUT':
                 $this->handlePut();
-                return;
+                break;
             case 'DELETE':
                 $this->handleDelete();
-                return;
+                break;
             default:
                 http_response_code(405);
                 echo json_encode(['message' => 'Method not allowed.']);
-                return;
         }
     }
 
     private function handleGet($params) {
         if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-            $this->quote->id = htmlspecialchars(strip_tags($_GET['id']));
-            $result = $this->quote->read_single();
+            $this->getQuoteById($_GET['id']);
+        } elseif (isset($_GET['author_id']) && is_numeric($_GET['author_id']) && isset($_GET['category_id']) && is_numeric($_GET['category_id'])) {
+            $this->getQuotesByAuthorAndCategory($_GET['author_id'], $_GET['category_id']);
+        } elseif (isset($_GET['author_id']) && is_numeric($_GET['author_id'])) {
+            $this->getQuotesByAuthor($_GET['author_id']);
+        } elseif (isset($_GET['category_id']) && is_numeric($_GET['category_id'])) {
+            $this->getQuotesByCategory($_GET['category_id']);
+        } else {
+            $this->fetchQuotes();
+        }
+    }
 
-            if ($result) {
-                http_response_code(200);
-                echo json_encode([
-                    "id" => $this->quote->id,
-                    "quote" => $this->quote->quote,
-                    "author" => $this->quote->author,
-                    "category" => $this->quote->category
-                ]);
-            } else {
-                http_response_code(404);
-                echo json_encode(["message" => "No Quote Found."]);
-            }
-            return;
+    private function getQuoteById($id) {
+        $this->quote->id = htmlspecialchars(strip_tags($id));
+        $result = $this->quote->read_single();
+
+        if ($result) {
+            http_response_code(200);
+            echo json_encode([
+                "id" => $this->quote->id,
+                "quote" => $this->quote->quote,
+                "author" => $this->quote->author,
+                "category" => $this->quote->category
+            ]);
+        } else {
+            http_response_code(404);
+            echo json_encode(["message" => "No Quote Found."]);
+        }
+    }
+
+    private function getQuotesByAuthorAndCategory($author_id, $category_id) {
+        $result = $this->quote->readByAuthorAndCategory($author_id, $category_id);
+        $this->processQuoteResults($result, "No Quotes Found for this Author and Category.");
+    }
+
+    private function getQuotesByAuthor($author_id) {
+        $result = $this->quote->readByAuthor($author_id);
+        $this->processQuoteResults($result, "No Quotes Found for this Author.");
+    }
+
+    private function getQuotesByCategory($category_id) {
+        $result = $this->quote->readByCategory($category_id);
+        $this->processQuoteResults($result, "No Quotes Found for this Category.");
+    }
+
+    private function processQuoteResults($result, $errorMessage) {
+        $quotes_arr = [];
+        while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+            $quotes_arr[] = [
+                "id" => $row["id"],
+                "quote" => $row["quote"],
+                "author" => $row["author"],
+                "category" => $row["category"]
+            ];
         }
 
-        if (isset($_GET['author_id']) && is_numeric($_GET['author_id']) && isset($_GET['category_id']) && is_numeric($_GET['category_id'])) {
-            $author_id = htmlspecialchars(strip_tags($_GET['author_id']));
-            $category_id = htmlspecialchars(strip_tags($_GET['category_id']));
-            $result = $this->quote->readByAuthorAndCategory($author_id, $category_id);
-
-            $quotes_arr = [];
-            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                $quotes_arr[] = [
-                    "id" => $row["id"],
-                    "quote" => $row["quote"],
-                    "author" => $row["author"],
-                    "category" => $row["category"]
-                ];
-            }
-
-            if (count($quotes_arr) > 0) {
-                http_response_code(200);
-                echo json_encode($quotes_arr);
-            } else {
-                http_response_code(404);
-                echo json_encode(["message" => "No Quotes Found for this Author and Category."]);
-            }
-            return;
+        if (count($quotes_arr) > 0) {
+            http_response_code(200);
+            echo json_encode($quotes_arr);
+        } else {
+            http_response_code(404);
+            echo json_encode(["message" => $errorMessage]);
         }
+    }
 
-        if (isset($_GET['author_id']) && is_numeric($_GET['author_id'])) {
-            $author_id = htmlspecialchars(strip_tags($_GET['author_id']));
-            $result = $this->quote->readByAuthor($author_id);
-
-            $quotes_arr = [];
-            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                $quotes_arr[] = [
-                    "id" => $row["id"],
-                    "quote" => $row["quote"],
-                    "author" => $row["author"],
-                    "category" => $row["category"]
-                ];
-            }
-
-            if (count($quotes_arr) > 0) {
-                http_response_code(200);
-                echo json_encode($quotes_arr);
-            } else {
-                http_response_code(404);
-                echo json_encode(["message" => "No Quotes Found for this Author."]);
-            }
-            return;
-        }
-
-        if (isset($_GET['category_id']) && is_numeric($_GET['category_id'])) {
-            $category_id = htmlspecialchars(strip_tags($_GET['category_id']));
-            $result = $this->quote->readByCategory($category_id);
-
-            $quotes_arr = [];
-            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                $quotes_arr[] = [
-                    "id" => $row["id"],
-                    "quote" => $row["quote"],
-                    "author" => $row["author"],
-                    "category" => $row["category"]
-                ];
-            }
-
-            if (count($quotes_arr) > 0) {
-                http_response_code(200);
-                echo json_encode($quotes_arr);
-            } else {
-                http_response_code(404);
-                echo json_encode(["message" => "No Quotes Found for this Category."]);
-            }
-            return;
-        }
-
-        $this->fetchQuotes();
+    public function fetchQuotes() {
+        $result = $this->quote->read();
+        $this->processQuoteResults($result, "No Quotes Found.");
     }
 
     private function handlePost() {
@@ -169,11 +119,9 @@ class QuoteController {
                 if ($this->quote->create()) {
                     http_response_code(201);
                     echo json_encode(["message" => "Quote was created."]);
-                    return;
                 } else {
                     http_response_code(503);
                     echo json_encode(["message" => "Unable to create quote."]);
-                    return;
                 }
             } else {
                 http_response_code(400);
@@ -181,12 +129,10 @@ class QuoteController {
                 if (!$authorExists) $message .= "author_id Not Found. ";
                 if (!$categoryExists) $message .= "category_id Not Found.";
                 echo json_encode(["message" => $message]);
-                return;
             }
         } else {
             http_response_code(400);
             echo json_encode(["message" => "Missing Required Parameters"]);
-            return;
         }
     }
 
@@ -202,16 +148,13 @@ class QuoteController {
             if ($this->quote->update()) {
                 http_response_code(200);
                 echo json_encode(["message" => "Quote was updated."]);
-                return;
             } else {
                 http_response_code(503);
                 echo json_encode(["message" => "Unable to update quote."]);
-                return;
             }
         } else {
             http_response_code(400);
             echo json_encode(["message" => "Unable to update quote. Data is incomplete."]);
-            return;
         }
     }
 
@@ -222,32 +165,29 @@ class QuoteController {
             $this->quote->id = htmlspecialchars(strip_tags($data->id));
 
             if ($this->quote->delete()) {
-                http_response_code(200); // OK
+                http_response_code(200);
                 echo json_encode(["message" => "Quote was deleted."]);
-                return;
             } else {
-                http_response_code(503); // Service Unavailable
+                http_response_code(503);
                 echo json_encode(["message" => "Unable to delete quote."]);
-                return;
             }
         } else {
-            http_response_code(400); // Bad Request
+            http_response_code(400);
             echo json_encode(["message" => "Unable to delete quote. Data is incomplete."]);
-            return;
         }
     }
 
     private function authorExists($author_id) {
-        if (!is_numeric($author_id)) return false; // Ensure it's numeric
+        if (!is_numeric($author_id)) return false;
         $query = "SELECT id FROM authors WHERE id = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(1, $author_id);
         $stmt->execute();
         return $stmt->rowCount() > 0;
     }
-    
+
     private function categoryExists($category_id) {
-        if (!is_numeric($category_id)) return false; // Ensure it's numeric
+        if (!is_numeric($category_id)) return false;
         $query = "SELECT id FROM categories WHERE id = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(1, $category_id);
@@ -256,4 +196,3 @@ class QuoteController {
     }
 }
 ?>
-
