@@ -12,25 +12,27 @@ class QuoteController {
         $this->quote = new Quote($db);
     }
 
+    // Fetch all quotes
     public function fetchQuotes() {
         $result = $this->quote->read();
 
         if (!is_array($result) || count($result) === 0) {
             http_response_code(404); // Not Found
             echo json_encode(["message" => "No Quotes Found"]);
-            exit; // Ensure no further execution
+            exit;
         }
 
         http_response_code(200); // OK
         echo json_encode(["status" => "success", "data" => $result]);
-        exit; // Ensure only one response is sent
+        exit;
     }
 
+    // Handle incoming requests
     public function handleRequest($method, $params) {
         switch ($method) {
             case 'GET':
                 $this->handleGet($params);
-                return; // Ensure script stops here
+                return;
             case 'POST':
                 $this->handlePost();
                 return;
@@ -53,16 +55,16 @@ class QuoteController {
             $result = $this->quote->readOne();
 
             if ($result) {
-                http_response_code(200);
+                http_response_code(200); // OK
                 echo json_encode($result);
             } else {
-                http_response_code(404);
+                http_response_code(404); // Not Found
                 echo json_encode(["message" => "Quote Not Found."]);
             }
         } else {
-            $this->fetchQuotes(); // Reuse the fetchQuotes method
+            $this->fetchQuotes();
         }
-        exit; // Terminate script to prevent extra output
+        exit;
     }
 
     private function handlePost() {
