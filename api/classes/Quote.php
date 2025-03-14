@@ -26,7 +26,7 @@ class Quote {
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC); // Return all results
+            return $stmt; // Return the PDO statement object
         } catch (PDOException $e) {
             error_log("Database error (read): " . $e->getMessage());
             return false;

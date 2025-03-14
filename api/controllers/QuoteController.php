@@ -15,12 +15,12 @@ class QuoteController {
     // Fetch all quotes
     public function fetchQuotes() {
         $result = $this->quote->read(); // Call the model's read method to fetch quotes
-
-        $num = $result->rowCount(); // Get the count of rows
-
+    
+        $num = $result->rowCount(); // Get the count of rows (correct variable is $result)
+    
         if ($num > 0) {
             $quotes_arr = []; // Initialize an array to hold quotes
-
+    
             // Loop through results and build the JSON response
             while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                 $quotes_arr[] = [
@@ -30,17 +30,17 @@ class QuoteController {
                     "category" => $row["category"] 
                 ];
             }
-
+    
             // Send the array of quotes as JSON
             http_response_code(200); // OK
             echo json_encode($quotes_arr);
             return;
         }
-
+    
         // If no quotes are found, return a message
         http_response_code(404); // Not Found
         echo json_encode(["message" => "No Quotes Found."]);
-    }
+    }    
 
     // Handle incoming requests
     public function handleRequest($method, $params) {

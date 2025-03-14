@@ -40,7 +40,7 @@ class CategoryController {
                 return;
             }
 
-            $this->category->id = htmlspecialchars(strip_tags($params['id']));
+            $this->category->id = htmlspecialchars($params['id']);
             $result = $this->category->readOne();
 
             if ($result) {
@@ -77,45 +77,47 @@ class CategoryController {
     private function handlePost() {
         $data = json_decode(file_get_contents("php://input"));
 
-        if (!empty($data->category)) { // Validate input
+        if (!empty($data->category) && strlen($data->category) <= 255) { // Validate input
             $this->category->category = htmlspecialchars(strip_tags($data->category));
 
             if ($this->category->create()) {
                 http_response_code(201); // Created
                 echo json_encode(["message" => "Category was created."]);
             } else {
+                error_log("Failed to create category: " . json_encode($data)); // Log error
                 http_response_code(503); // Service Unavailable
                 echo json_encode(["message" => "Unable to create category."]);
             }
         } else {
             http_response_code(400); // Bad Request
-            echo json_encode(["message" => "Unable to create category. Data is incomplete."]);
+            echo json_encode(["message" => "Category name is either empty or too long."]);
         }
     }
 
     private function handlePut() {
         $data = json_decode(file_get_contents("php://input"));
 
-        if (!empty($data->id) && !empty($data->category)) { // Validate input
+        if (!empty($data->id) && !empty($data->category) && strlen($data->category) <= 255) { // Validate input
             if (!is_numeric($data->id)) { // Validate ID
                 http_response_code(400); // Bad Request
                 echo json_encode(["message" => "Invalid id parameter."]);
                 return;
             }
 
-            $this->category->id = htmlspecialchars(strip_tags($data->id));
+            $this->category->id = htmlspecialchars($data->id);
             $this->category->category = htmlspecialchars(strip_tags($data->category));
 
             if ($this->category->update()) {
                 http_response_code(200); // OK
                 echo json_encode(["message" => "Category was updated."]);
             } else {
+                error_log("Failed to update category with ID: " . $data->id); // Log error
                 http_response_code(503); // Service Unavailable
                 echo json_encode(["message" => "Unable to update category."]);
             }
         } else {
             http_response_code(400); // Bad Request
-            echo json_encode(["message" => "Unable to update category. Data is incomplete."]);
+            echo json_encode(["message" => "Category name is either empty or too long."]);
         }
     }
 
@@ -129,12 +131,13 @@ class CategoryController {
                 return;
             }
 
-            $this->category->id = htmlspecialchars(strip_tags($data->id));
+            $this->category->id = htmlspecialchars($data->id);
 
             if ($this->category->delete()) {
                 http_response_code(200); // OK
                 echo json_encode(["message" => "Category was deleted."]);
             } else {
+                error_log("Failed to delete category with ID: " . $data->id); // Log error
                 http_response_code(503); // Service Unavailable
                 echo json_encode(["message" => "Unable to delete category."]);
             }
