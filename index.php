@@ -70,59 +70,7 @@ if ($request_uri[0] === 'api') {
     }
 
 } else {
-    error_log("HTML Routing Triggered");
-
-    // Front-End HTML Logic
-    header('Content-Type: text/html; charset=UTF-8');
-    echo "
-    <!DOCTYPE html>
-    <html lang='en'>
-    <head>
-        <meta charset='UTF-8'>
-        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-        <title>Quotes API</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                text-align: center;
-                background-color: #f4f4f9;
-                color: #333;
-                margin: 0;
-                padding: 0;
-            }
-            header {
-                background-color: #A9A9A9;
-                color: white;
-                padding: 20px 0;
-            }
-            main {
-                padding: 20px;
-            }
-            a {
-                color: #4CAF50;
-                text-decoration: none;
-            }
-            a:hover {
-                text-decoration: underline;
-            }
-        </style>
-    </head>
-    <body>
-        <header>
-            <h1>Quotes API</h1>
-        </header>
-        <main>
-            <p>INF653 Back End Web Development - Midterm Project</p>
-            <p>Josh Boepple</p>
-            <p>Available Endpoints:</p>
-            <ul>
-                <p><a href='/api/quotes/'>/api/quotes</a> - Get all quotes</p>
-                <p><a href='/api/authors/'>/api/authors</a> - Get all authors</p>
-                <p><a href='/api/categories/'>/api/categories</a> - Get all categories</p>
-            </ul>
-        </main>
-    </body>
-    </html>
-    ";
+    http_response_code(404);
+    echo json_encode("HTML Routing Triggered");
 }
 ?>
