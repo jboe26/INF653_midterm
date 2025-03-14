@@ -34,7 +34,7 @@ class Quote {
     }
 
     // Read one quote by ID
-    public function readOne() {
+    public function readSingle() {
         try {
             $query = "SELECT q.id, q.quote, a.author AS author, c.category AS category 
                       FROM " . $this->table_name . " q 
