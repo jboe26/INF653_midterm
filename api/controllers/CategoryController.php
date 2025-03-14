@@ -51,7 +51,7 @@ class CategoryController {
                 ]);
             } else {
                 http_response_code(404);
-                echo json_encode(["message" => "Category Not Found."]);
+                echo json_encode(["id" => $params['id'], "message" => "Category Not Found."]); // Added id
             }
         } else {
             $stmt = $this->category->read();

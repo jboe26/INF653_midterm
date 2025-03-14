@@ -51,7 +51,7 @@ class AuthorController {
                 ]);
             } else {
                 http_response_code(404);
-                echo json_encode(["message" => "Author Not Found."]);
+                echo json_encode(["id" => $params['id'], "message" => "Author Not Found."]); // Added id
             }
         } else {
             $stmt = $this->author->read();
