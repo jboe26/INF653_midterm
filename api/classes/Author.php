@@ -12,62 +12,95 @@ class Author {
 
     // Read all authors
     public function read() {
-        $query = "SELECT * FROM " . $this->table_name;
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt;
+        try {
+            $query = "SELECT id, author FROM " . $this->table_name;
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt;
+        } catch (PDOException $e) {
+            error_log("Database error (read): " . $e->getMessage());
+            return false;
+        }
     }
 
-    // Read one author
+    // Read one author by ID
     public function readOne() {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE id = ?";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(1, $this->id);
-        $stmt->execute();
-    
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($row) {
-            $this->author = $row['author'];
-        } else {
-            echo json_encode(["message" => "author_id Not Found"]);
+        try {
+            $query = "SELECT id, author FROM " . $this->table_name . " WHERE id = :id LIMIT 1";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                $this->author = $row['author'];
+                return true;
+            } else {
+                return false; // Author not found
+            }
+        } catch (PDOException $e) {
+            error_log("Database error (readOne): " . $e->getMessage());
+            return false;
         }
-    }    
+    }
 
     // Create an author
     public function create() {
-        $query = "INSERT INTO " . $this->table_name . " (author) VALUES (?)";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(1, $this->author);
+        try {
+            $query = "INSERT INTO " . $this->table_name . " (author) VALUES (:author)";
+            $stmt = $this->conn->prepare($query);
 
-        if ($stmt->execute()) {
-            return true;
+            // Sanitize input
+            $this->author = htmlspecialchars(strip_tags($this->author));
+
+            // Bind parameter
+            $stmt->bindParam(':author', $this->author);
+
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Database error (create): " . $e->getMessage());
+            return false;
         }
-        return false;
     }
 
     // Update an author
     public function update() {
-        $query = "UPDATE " . $this->table_name . " SET author = :author WHERE id = :id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':author', $this->author);
-        $stmt->bindParam(':id', $this->id);
+        try {
+            $query = "UPDATE " . $this->table_name . " SET author = :author WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
 
-        if ($stmt->execute()) {
-            return true;
+            // Sanitize inputs
+            $this->author = htmlspecialchars(strip_tags($this->author));
+            $this->id = htmlspecialchars(strip_tags($this->id));
+
+            // Bind parameters
+            $stmt->bindParam(':author', $this->author);
+            $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Database error (update): " . $e->getMessage());
+            return false;
         }
-        return false;
     }
 
     // Delete an author
     public function delete() {
-        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(1, $this->id);
+        try {
+            $query = "DELETE FROM " . $this->table_name . " WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
 
-        if ($stmt->execute()) {
-            return true;
+            // Sanitize ID
+            $this->id = htmlspecialchars(strip_tags($this->id));
+
+            // Bind parameter
+            $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Database error (delete): " . $e->getMessage());
+            return false;
         }
-        return false;
     }
 }
 ?>

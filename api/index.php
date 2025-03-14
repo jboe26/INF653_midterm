@@ -35,6 +35,7 @@ if (in_array($endpoint, ['quotes', 'authors', 'categories'])) {
         case 'quotes':
             include_once __DIR__ . '/controllers/QuoteController.php';
             $controller = new QuoteController($db);
+            $controller->handleRequest($method, array_slice($request_uri, 3));
             break;
     
         case 'authors':

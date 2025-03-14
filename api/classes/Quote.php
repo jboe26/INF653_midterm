@@ -22,7 +22,7 @@ class Quote {
                       FROM " . $this->table_name . " q 
                       LEFT JOIN authors a ON q.author_id = a.id 
                       LEFT JOIN categories c ON q.category_id = c.id";
-            
+
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
 
@@ -40,14 +40,75 @@ class Quote {
                       FROM " . $this->table_name . " q 
                       LEFT JOIN authors a ON q.author_id = a.id 
                       LEFT JOIN categories c ON q.category_id = c.id 
-                      WHERE q.id = ? LIMIT 1";
+                      WHERE q.id = :id LIMIT 1";
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(1, $this->id);
+            $stmt->bindParam(':id', $this->id);
             $stmt->execute();
 
             return $stmt->fetch(PDO::FETCH_ASSOC); // Return a single result
         } catch (PDOException $e) {
             error_log("Database error (readOne): " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Read quotes by author ID
+    public function readByAuthor($author_id) {
+        try {
+            $query = "SELECT q.id, q.quote, a.author AS author, c.category AS category 
+                      FROM " . $this->table_name . " q 
+                      LEFT JOIN authors a ON q.author_id = a.id 
+                      LEFT JOIN categories c ON q.category_id = c.id 
+                      WHERE q.author_id = :author_id";
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':author_id', $author_id);
+            $stmt->execute();
+
+            return $stmt; // Return the statement for use in the controller
+        } catch (PDOException $e) {
+            error_log("Database error (readByAuthor): " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Read quotes by category ID
+    public function readByCategory($category_id) {
+        try {
+            $query = "SELECT q.id, q.quote, a.author AS author, c.category AS category 
+                      FROM " . $this->table_name . " q 
+                      LEFT JOIN authors a ON q.author_id = a.id 
+                      LEFT JOIN categories c ON q.category_id = c.id 
+                      WHERE q.category_id = :category_id";
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':category_id', $category_id);
+            $stmt->execute();
+
+            return $stmt;
+        } catch (PDOException $e) {
+            error_log("Database error (readByCategory): " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Read quotes by both author and category IDs
+    public function readByAuthorAndCategory($author_id, $category_id) {
+        try {
+            $query = "SELECT q.id, q.quote, a.author AS author, c.category AS category 
+                      FROM " . $this->table_name . " q 
+                      LEFT JOIN authors a ON q.author_id = a.id 
+                      LEFT JOIN categories c ON q.category_id = c.id 
+                      WHERE q.author_id = :author_id AND q.category_id = :category_id";
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':author_id', $author_id);
+            $stmt->bindParam(':category_id', $category_id);
+            $stmt->execute();
+
+            return $stmt;
+        } catch (PDOException $e) {
+            error_log("Database error (readByAuthorAndCategory): " . $e->getMessage());
             return false;
         }
     }
@@ -60,10 +121,16 @@ class Quote {
                 error_log("Validation error: Missing required fields.");
                 return false;
             }
-            
+
             // Check for duplicate quote
             if ($this->isDuplicate()) {
                 error_log("Duplicate quote detected: " . $this->quote);
+                return false;
+            }
+
+            // Check if author and category exist
+            if (!$this->authorExists($this->author_id) || !$this->categoryExists($this->category_id)) {
+                error_log("Validation error: Invalid author_id or category_id.");
                 return false;
             }
 
@@ -82,18 +149,29 @@ class Quote {
             $stmt->bindParam(":author_id", $this->author_id);
             $stmt->bindParam(":category_id", $this->category_id);
 
-            // Execute query
-            if ($stmt->execute()) {
-                error_log("Quote created successfully: " . $this->quote);
-                return true;
-            } else {
-                error_log("Failed to create quote: " . json_encode($stmt->errorInfo()));
-                return false;
-            }
+            return $stmt->execute();
         } catch (PDOException $e) {
             error_log("Database error (create): " . $e->getMessage());
             return false;
         }
+    }
+
+    // Helper function to check if the author exists
+    private function authorExists($author_id) {
+        $query = "SELECT id FROM authors WHERE id = :author_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':author_id', $author_id);
+        $stmt->execute();
+        return $stmt->rowCount() > 0;
+    }
+
+    // Helper function to check if the category exists
+    private function categoryExists($category_id) {
+        $query = "SELECT id FROM categories WHERE id = :category_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':category_id', $category_id);
+        $stmt->execute();
+        return $stmt->rowCount() > 0;
     }
 
     // Check for duplicate quote
@@ -111,50 +189,6 @@ class Quote {
         }
     }
 
-    // Update a quote
-    public function update() {
-        try {
-            $query = "UPDATE " . $this->table_name . " 
-                      SET quote = :quote, author_id = :author_id, category_id = :category_id 
-                      WHERE id = :id";
-            $stmt = $this->conn->prepare($query);
-
-            // Sanitize inputs
-            $this->quote = htmlspecialchars(strip_tags($this->quote));
-            $this->author_id = htmlspecialchars(strip_tags($this->author_id));
-            $this->category_id = htmlspecialchars(strip_tags($this->category_id));
-            $this->id = htmlspecialchars(strip_tags($this->id));
-
-            // Bind parameters
-            $stmt->bindParam(":quote", $this->quote);
-            $stmt->bindParam(":author_id", $this->author_id);
-            $stmt->bindParam(":category_id", $this->category_id);
-            $stmt->bindParam(":id", $this->id);
-
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            error_log("Database error (update): " . $e->getMessage());
-            return false;
-        }
-    }
-
-    // Delete a quote
-    public function delete() {
-        try {
-            $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
-            $stmt = $this->conn->prepare($query);
-
-            // Sanitize ID
-            $this->id = htmlspecialchars(strip_tags($this->id));
-            $stmt->bindParam(1, $this->id);
-
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            error_log("Database error (delete): " . $e->getMessage());
-            return false;
-        }
-    }
-
     // Read a random quote
     public function readRandom() {
         try {
@@ -166,7 +200,13 @@ class Quote {
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
 
-            return $stmt->fetch(PDO::FETCH_ASSOC); // Return a single random quote
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($row) {
+                return $row; // Return the random quote
+            } else {
+                return false; // No quotes available
+            }
         } catch (PDOException $e) {
             error_log("Database error (readRandom): " . $e->getMessage());
             return false;
