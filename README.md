@@ -3,7 +3,7 @@
 
 ### ### This RESTful API manages quotes, authors, and categories using PHP and PostgreSQL.
 
-### ### Deployed Project: [\[Your Deployed Project Link\]](https://quotedb-api.onrender.com/)
+### ### Deployed Project: [\[My Deployed Project Link\]](https://quotedb-api.onrender.com/)
 
 ### ### API Overview
 
