@@ -12,11 +12,12 @@ if ($method === 'OPTIONS') {
 
 $request_uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
 
-if (isset($request_uri[1]) && $request_uri[1] === 'api') {
+// Check if the URL starts with /api
+if (isset($request_uri[0]) && $request_uri[0] === 'api') {
     // API Routing Logic
-    header('Content-Type: application/json'); // Set JSON content type for API
+    header('Content-Type: application/json');
 
-    $endpoint = isset($request_uri[2]) ? $request_uri[2] : 'quotes'; // Adjusted index
+    $endpoint = isset($request_uri[1]) ? $request_uri[1] : 'quotes';
 
     if (in_array($endpoint, ['quotes', 'authors', 'categories'])) {
         include_once 'api/classes/Database.php';
@@ -46,7 +47,7 @@ if (isset($request_uri[1]) && $request_uri[1] === 'api') {
                 exit();
         }
 
-        $controller->handleRequest($method, array_slice($request_uri, 3)); // Adjusted slice
+        $controller->handleRequest($method, $_GET);
     } else {
         http_response_code(404);
         echo json_encode(["message" => "Invalid endpoint."]);
@@ -54,7 +55,7 @@ if (isset($request_uri[1]) && $request_uri[1] === 'api') {
 
 } else {
     // Front-End HTML Logic
-    header('Content-Type: text/html; charset=UTF-8'); // Set HTML content type for front-end
+    header('Content-Type: text/html; charset=UTF-8');
     echo "
     <!DOCTYPE html>
     <html lang='en'>
