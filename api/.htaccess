@@ -1,12 +1,12 @@
 RewriteEngine On
 RewriteBase /
 
-# Redirect root URL to api/index.php
-RewriteRule ^$ api/index.php [L]
+# Handle API requests (starting with /api/)
+RewriteRule ^api/(.*)$ api/index.php [QSA,L]
 
-# Handle existing static files and directories
+# Handle existing static files and directories (for your front-end)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
-# Route everything else to api/index.php
-RewriteRule ^ api/index.php [QSA,L]
+# Route everything else to the root index.php (your front-end)
+RewriteRule ^ index.php [QSA,L]

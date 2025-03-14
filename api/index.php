@@ -1,5 +1,5 @@
 <?php
-// CORS Headers
+// CORS Headers (for API)
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 $method = $_SERVER['REQUEST_METHOD'];
@@ -10,23 +10,13 @@ if ($method === 'OPTIONS') {
     exit();
 }
 
-// Add handling for the `/api` root endpoint
-if ($_SERVER['REQUEST_URI'] === '/api') {
-    header('Content-Type: application/json');
-    echo json_encode([
-        "message" => "Welcome to the Quote API. Use endpoints like /quotes, /authors, or /categories for data."
-    ]);
-    exit();
-}
-
-// Parse the requested URL
+// Parse the requested URL (within the /api directory)
 $request_uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-$endpoint = isset($request_uri[2]) ? $request_uri[2] : 'quotes'; // Default to 'quotes'
-$method = $_SERVER['REQUEST_METHOD'];
+$endpoint = isset($request_uri[1]) ? $request_uri[1] : 'quotes'; // Default to 'quotes'
 
 // Validate and route to the appropriate controller
 if (in_array($endpoint, ['quotes', 'authors', 'categories'])) {
-    // Include necessary files
+    // Include necessary files (within the /api directory)
     include_once 'classes/Database.php';
     include_once 'classes/Quote.php';
     include_once 'controllers/QuoteController.php';
@@ -44,15 +34,12 @@ if (in_array($endpoint, ['quotes', 'authors', 'categories'])) {
         case 'quotes':
             $controller = new QuoteController($db);
             break;
-
         case 'authors':
             $controller = new AuthorController($db);
             break;
-
         case 'categories':
             $controller = new CategoryController($db);
             break;
-
         default:
             // Invalid endpoint handling
             http_response_code(404);
@@ -61,7 +48,7 @@ if (in_array($endpoint, ['quotes', 'authors', 'categories'])) {
     }
 
     // Handle the request
-    $controller->handleRequest($method, array_slice($request_uri, 3));
+    $controller->handleRequest($method, array_slice($request_uri, 2));
 } else {
     // Invalid endpoint
     http_response_code(404);
