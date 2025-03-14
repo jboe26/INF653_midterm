@@ -15,16 +15,6 @@ $request_uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
 $endpoint = isset($request_uri[2]) ? $request_uri[2] : 'quotes'; // Default to 'quotes'
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Debugging the requested endpoint and method
-echo json_encode([
-    'debug' => 'Reached main router',
-    'endpoint' => $endpoint,
-    'method' => $method,
-    'request_uri' => $request_uri
-]);
-exit();
-
-
 // Validate and route to the appropriate controller
 if (in_array($endpoint, ['quotes', 'authors', 'categories'])) {
     // Include necessary files
@@ -43,15 +33,26 @@ if (in_array($endpoint, ['quotes', 'authors', 'categories'])) {
     // Instantiate the appropriate controller
     switch ($endpoint) {
         case 'quotes':
+            include_once __DIR__ . '/controllers/QuoteController.php';
             $controller = new QuoteController($db);
             break;
+    
         case 'authors':
+            include_once __DIR__ . '/controllers/AuthorController.php';
             $controller = new AuthorController($db);
             break;
+    
         case 'categories':
+            include_once __DIR__ . '/controllers/CategoryController.php';
             $controller = new CategoryController($db);
             break;
-    }
+    
+        default:
+            // Invalid endpoint handling
+            http_response_code(404);
+            echo json_encode(["message" => "Invalid endpoint."]);
+            exit(); // Stop further processing
+    }    
 
     // Handle the request
     $controller->handleRequest($method, array_slice($request_uri, 3));
