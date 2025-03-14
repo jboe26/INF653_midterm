@@ -2,8 +2,8 @@ RewriteEngine On
 RewriteBase /
 
 # Handle API requests (starting with /api/)
-RewriteRule ^api/(.*)$ api/index.php [QSA,L]
-RewriteRule ^api/?$ api/index.php [QSA,L]
+RewriteRule ^api/(.*)$ index.php [QSA,L]
+RewriteRule ^api/?$ index.php [QSA,L]
 
 # Handle existing static files and directories (for your front-end)
 RewriteCond %{REQUEST_FILENAME} !-f
