@@ -1,4 +1,5 @@
 <?php
+
 class Quote {
     // Database connection and table name
     private $conn;
@@ -45,7 +46,17 @@ class Quote {
             $stmt->bindParam(':id', $this->id);
             $stmt->execute();
 
-            return $stmt->fetch(PDO::FETCH_ASSOC); // Return a single result
+            $row = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the result
+
+            if ($row) {
+                // Assign data to object properties
+                $this->quote = $row['quote'];
+                $this->author = $row['author'];
+                $this->category = $row['category'];
+                return true; // Indicate success
+            } else {
+                return false; // No quote found
+            }
         } catch (PDOException $e) {
             error_log("Database error (readOne): " . $e->getMessage());
             return false;
