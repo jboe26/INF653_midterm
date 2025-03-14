@@ -15,6 +15,16 @@ $request_uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
 $endpoint = isset($request_uri[2]) ? $request_uri[2] : 'quotes'; // Default to 'quotes'
 $method = $_SERVER['REQUEST_METHOD'];
 
+// Debugging the requested endpoint and method
+echo json_encode([
+    'debug' => 'Reached main router',
+    'endpoint' => $endpoint,
+    'method' => $method,
+    'request_uri' => $request_uri
+]);
+exit();
+
+
 // Validate and route to the appropriate controller
 if (in_array($endpoint, ['quotes', 'authors', 'categories'])) {
     // Include necessary files
