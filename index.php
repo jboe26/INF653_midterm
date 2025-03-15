@@ -28,8 +28,27 @@ if ($request_uri[0] === 'api') {
 
     // Add this check for /api/
     if (!isset($request_uri[1])) {
-        http_response_code(200);
-        echo json_encode(["message" => "Welcome to the QuoteDB API. Available endpoints: /api/quotes, /api/authors, /api/categories"]);
+        // Replace JSON with HTML
+        header('Content-Type: text/html; charset=UTF-8');
+        echo "
+            <!DOCTYPE html>
+            <html lang='en'>
+            <head>
+                <meta charset='UTF-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                <title>QuoteDB API</title>
+            </head>
+            <body>
+                <h1>Welcome to the QuoteDB API</h1>
+                <p>Available endpoints:</p>
+                <ul>
+                    <li><a href='/api/quotes/'>/api/quotes</a></li>
+                    <li><a href='/api/authors/'>/api/authors</a></li>
+                    <li><a href='/api/categories/'>/api/categories</a></li>
+                </ul>
+            </body>
+            </html>
+        ";
         exit;
     }
 
@@ -71,6 +90,6 @@ if ($request_uri[0] === 'api') {
 
 } else {
     http_response_code(404);
-    echo json_encode("HTML Routing Triggered");
+    echo json_encode(["message" => "Not Found."]);
 }
 ?>
