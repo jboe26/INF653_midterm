@@ -19,36 +19,22 @@ error_log("Parsed REQUEST_URI: " . print_r($request_uri, true));
 error_log("REQUEST_URI[0]: " . (isset($request_uri[0]) ? $request_uri[0] : 'Not Set'));
 error_log("REQUEST_URI[1]: " . (isset($request_uri[1]) ? $request_uri[1] : 'Not Set'));
 
-// Simplified if condition for testing
 if ($request_uri[0] === 'api') {
     error_log("API Routing Triggered");
 
     // API Routing Logic
     header('Content-Type: application/json');
 
-    // Add this check for /api/
+    // Handle /api/ endpoint with json.
     if (!isset($request_uri[1])) {
-        // Replace JSON with HTML
-        header('Content-Type: text/html; charset=UTF-8');
-        echo "
-            <!DOCTYPE html>
-            <html lang='en'>
-            <head>
-                <meta charset='UTF-8'>
-                <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-                <title>QuoteDB API</title>
-            </head>
-            <body>
-                <h1>Welcome to the QuoteDB API</h1>
-                <p>Available endpoints:</p>
-                <ul>
-                    <li><a href='/api/quotes/'>/api/quotes</a></li>
-                    <li><a href='/api/authors/'>/api/authors</a></li>
-                    <li><a href='/api/categories/'>/api/categories</a></li>
-                </ul>
-            </body>
-            </html>
-        ";
+        echo json_encode([
+            "message" => "Welcome to the QuoteDB API",
+            "endpoints" => [
+                "/api/quotes",
+                "/api/authors",
+                "/api/categories"
+            ]
+        ]);
         exit;
     }
 
