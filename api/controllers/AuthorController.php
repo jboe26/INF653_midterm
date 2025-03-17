@@ -100,21 +100,16 @@ class AuthorController {
 
     private function handlePut() {
         $data = json_decode(file_get_contents("php://input"));
+        $id = $_GET['id']; // Get id from query parameter.
     
-        var_dump($data);
-        var_dump(!empty($data->id));
-        var_dump(!empty($data->author));
-        var_dump(strlen($data->author));
-        var_dump($data->author);
-    
-        if (!empty($data->id) && !empty($data->author) && strlen($data->author) <= 255) {
-            if (!is_numeric($data->id)) {
+        if (!empty($id) && !empty($data->author) && strlen($data->author) <= 255) {
+            if (!is_numeric($id)) {
                 http_response_code(400);
                 echo json_encode(["message" => "Invalid id parameter."]);
                 return;
             }
     
-            $this->author->id = htmlspecialchars($data->id);
+            $this->author->id = htmlspecialchars($id);
             $this->author->author = htmlspecialchars(strip_tags($data->author));
     
             if ($this->author->update()) {
@@ -125,7 +120,7 @@ class AuthorController {
                     "message" => "Author was updated."
                 ]);
             } else {
-                error_log("Failed to update author with ID: " . $data->id);
+                error_log("Failed to update author with ID: " . $id);
                 http_response_code(503);
                 echo json_encode(["message" => "Unable to update author."]);
             }
