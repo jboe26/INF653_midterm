@@ -131,22 +131,22 @@ class AuthorController {
     }
 
     private function handleDelete() {
-        $data = json_decode(file_get_contents("php://input"));
-
-        if (!empty($data->id)) {
-            if (!is_numeric($data->id)) {
+        $id = $_GET['id']; // Get id from query parameter.
+    
+        if (!empty($id)) {
+            if (!is_numeric($id)) {
                 http_response_code(400);
                 echo json_encode(["message" => "Invalid id parameter."]);
                 return;
             }
-
-            $this->author->id = htmlspecialchars($data->id);
-
+    
+            $this->author->id = htmlspecialchars($id);
+    
             if ($this->author->delete()) {
                 http_response_code(200);
                 echo json_encode(["id" => $this->author->id, "message" => "Author was deleted."]);
             } else {
-                error_log("Failed to delete author with ID: " . $data->id);
+                error_log("Failed to delete author with ID: " . $id);
                 http_response_code(503);
                 echo json_encode(["message" => "Unable to delete author."]);
             }
