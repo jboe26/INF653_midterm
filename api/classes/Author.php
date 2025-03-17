@@ -43,25 +43,32 @@ class Author {
             return false;
         }
     }
+    
+        // Create an author
+        public function create() {
+            try {
+                $query = "INSERT INTO " . $this->table_name . " (author) VALUES (:author)";
+                $stmt = $this->conn->prepare($query);
 
-    // Create an author
-    public function create() {
-        try {
-            $query = "INSERT INTO " . $this->table_name . " (author) VALUES (:author)";
-            $stmt = $this->conn->prepare($query);
+                // Sanitize input
+                $this->author = htmlspecialchars(strip_tags($this->author));
 
-            // Sanitize input
-            $this->author = htmlspecialchars(strip_tags($this->author));
+                // Bind parameter
+                $stmt->bindParam(':author', $this->author);
 
-            // Bind parameter
-            $stmt->bindParam(':author', $this->author);
+                if ($stmt->execute()) {
+                    // Get the last inserted ID and set it to $this->id
+                    $this->id = $this->conn->lastInsertId();
+                    return true;
+                } else {
+                    return false;
+                }
 
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            error_log("Database error (create): " . $e->getMessage());
-            return false;
+            } catch (PDOException $e) {
+                error_log("Database error (create): " . $e->getMessage());
+                return false;
+            }
         }
-    }
 
     // Update an author
     public function update() {
