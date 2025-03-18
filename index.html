@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to QuoteDB</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff; 
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the QuotesDB API!</h1>
+    <h2>Joshua Boepple</h2>
+    <h2>INF 653 - Midterm</h2>
+
+    <h3>API Endpoints:</h3>
+    <ul id="endpoints-list">
+    </ul>
+
+    <script>
+        fetch('/api')
+            .then(response => response.json())
+            .then(data => {
+                const endpointsList = document.getElementById('endpoints-list');
+
+                data.endpoints.forEach(endpoint => {
+                    const listItem = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = endpoint;
+                    link.textContent = endpoint;
+                    listItem.appendChild(link);
+                    endpointsList.appendChild(listItem);
+                });
+            });
+    </script>
+</body>
+</html>

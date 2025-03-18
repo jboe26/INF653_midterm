@@ -22,21 +22,21 @@ error_log("REQUEST_URI[1]: " . (isset($request_uri[1]) ? $request_uri[1] : 'Not 
 if ($request_uri[0] === 'api') {
     error_log("API Routing Triggered");
 
-    // API Routing Logic
-    header('Content-Type: application/json');
+// API Routing Logic
+header('Content-Type: application/json');
 
-    // Handle /api/ endpoint with json.
-    if (!isset($request_uri[1])) {
-        echo json_encode([
-            "message" => "Welcome to the QuoteDB API",
-            "endpoints" => [
-                "/api/quotes",
-                "/api/authors",
-                "/api/categories"
-            ]
-        ]);
-        exit;
-    }
+// Handle /api/ endpoint with json.
+if (!isset($request_uri[1]) || (isset($request_uri[1]) && empty($request_uri[1]))) {
+    echo json_encode([
+        "message" => "Welcome to the QuoteDB API",
+        "endpoints" => [
+            "/api/quotes",
+            "/api/authors",
+            "/api/categories"
+        ]
+    ]);
+    exit;
+}
 
     $endpoint = $request_uri[1];
 
@@ -75,7 +75,6 @@ if ($request_uri[0] === 'api') {
     }
 
 } else {
-    http_response_code(404);
-    echo json_encode(["message" => "Not Found."]);
+    include 'index.html';
 }
 ?>
