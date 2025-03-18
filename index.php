@@ -1,7 +1,7 @@
 <?php
 // CORS Headers
 header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json'); // Add content type header
+header('Content-Type: application/json');
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'OPTIONS') {
@@ -53,11 +53,12 @@ if ($request_uri[0] === 'api') {
                 exit;
         }
 
-        $controller->handleRequest($method, $_GET, file_get_contents('php://input')); 
+        $controller->handleRequest($method, $_GET, file_get_contents('php://input'));
 
     } else {
-        http_response_code(400);
-        echo json_encode(['message' => 'Endpoint not specified']);
+        // Handle the /api/ case (no endpoint specified)
+        http_response_code(200); // Or another appropriate status code
+        echo json_encode(['message' => 'Welcome to the Quotes API. Available endpoints: /api/quotes, /api/authors, /api/categories']);
     }
 } else {
     http_response_code(404);
