@@ -1,5 +1,4 @@
 <?php
-
 // CORS Headers
 header('Access-Control-Allow-Origin: *');
 $method = $_SERVER['REQUEST_METHOD'];
@@ -22,48 +21,10 @@ error_log("REQUEST_URI[1]: " . (isset($request_uri[1]) ? $request_uri[1] : 'Not 
 if ($request_uri[0] === 'api') {
     error_log("API Routing Triggered");
 
-
-if (!isset($request_uri[1]) || (isset($request_uri[1]) && empty($request_uri[1]))) {
-    include 'index.html'; 
-    exit;
-}
-
-    $endpoint = $request_uri[1];
-
-    if (in_array($endpoint, ['quotes', 'authors', 'categories'])) {
-        include_once 'api/classes/Database.php';
-        include_once 'api/classes/Quote.php';
-        include_once 'api/controllers/QuoteController.php';
-        include_once 'api/classes/Author.php';
-        include_once 'api/controllers/AuthorController.php';
-        include_once 'api/classes/Category.php';
-        include_once 'api/controllers/CategoryController.php';
-
-        $database = new Database();
-        $db = $database->getConnection();
-
-        switch ($endpoint) {
-            case 'quotes':
-                $controller = new QuoteController($db);
-                break;
-            case 'authors':
-                $controller = new AuthorController($db);
-                break;
-            case 'categories':
-                $controller = new CategoryController($db);
-                break;
-            default:
-                http_response_code(404);
-                echo json_encode(["message" => "Invalid endpoint."]);
-                exit();
-        }
-
-        $controller->handleRequest($method, $_GET);
-    } else {
-        http_response_code(404);
-        echo json_encode(["message" => "Invalid endpoint."]);
+    if (!isset($request_uri[1]) || (isset($request_uri[1]) && empty($request_uri[1]))) {
+        include 'index.html'; 
+        exit;
     }
-
 } else {
     include 'index.html';
 }
