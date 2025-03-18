@@ -28,7 +28,7 @@ class AuthorController {
                 break;
             default:
                 http_response_code(405); // Method Not Allowed
-                echo json_encode(['message' => 'Method not allowed.']);
+                echo json_encode(['message' => 'Method not allowed.'], JSON_PRETTY_PRINT);
         }
     }
 
@@ -36,7 +36,7 @@ class AuthorController {
         if (isset($params['id'])) {
             if (!is_numeric($params['id'])) {
                 http_response_code(400);
-                echo json_encode(["message" => "Invalid or missing id parameter."]);
+                echo json_encode(["message" => "Invalid or missing id parameter."], JSON_PRETTY_PRINT);
                 return;
             }
 
@@ -48,10 +48,11 @@ class AuthorController {
                 echo json_encode([
                     "id" => $this->author->id,
                     "author" => $this->author->author
-                ]);
+                ], JSON_PRETTY_PRINT);
             } else {
                 http_response_code(404);
-                echo json_encode(["message" => "Author Not Found."]);
+                echo json_encode(["message" => "Author Not Found."], JSON_PRETTY_PRINT);
+                exit;
             }
         } else {
             $stmt = $this->author->read();
@@ -66,10 +67,10 @@ class AuthorController {
                     ];
                 }
                 http_response_code(200);
-                echo json_encode($authors_arr);
+                echo json_encode($authors_arr), JSON_PRETTY_PRINT;
             } else {
                 http_response_code(404);
-                echo json_encode(["message" => "No Authors Found"]);
+                echo json_encode(["message" => "No Authors Found"], JSON_PRETTY_PRINT);
             }
         }
     }
@@ -86,15 +87,15 @@ class AuthorController {
                     "id" => $this->author->id,
                     "author" => $this->author->author,
                     "message" => "Author was created"
-                ]);
+                ], JSON_PRETTY_PRINT);
             } else {
                 error_log("Failed to create author: " . json_encode($data));
                 http_response_code(503);
-                echo json_encode(["message" => "Unable to create author"]);
+                echo json_encode(["message" => "Unable to create author"], JSON_PRETTY_PRINT);
             }
         } else {
             http_response_code(400);
-            echo json_encode(["message" => "Author name is either empty or too long"]);
+            echo json_encode(["message" => "Author name is either empty or too long"], JSON_PRETTY_PRINT);
         }
     }
 
@@ -105,7 +106,7 @@ class AuthorController {
         if (!empty($id) && !empty($data->author) && strlen($data->author) <= 255) {
             if (!is_numeric($id)) {
                 http_response_code(400);
-                echo json_encode(["message" => "Invalid id parameter"]);
+                echo json_encode(["message" => "Invalid id parameter"], JSON_PRETTY_PRINT);
                 return;
             }
     
@@ -118,15 +119,15 @@ class AuthorController {
                     "id" => $this->author->id,
                     "author" => $this->author->author,
                     "message" => "Author was updated"
-                ]);
+                ], JSON_PRETTY_PRINT);
             } else {
                 error_log("Failed to update author with ID: " . $id);
                 http_response_code(503);
-                echo json_encode(["message" => "Unable to update author"]);
+                echo json_encode(["message" => "Unable to update author"], JSON_PRETTY_PRINT);
             }
         } else {
             http_response_code(400);
-            echo json_encode(["message" => "Author name is either empty or too long"]);
+            echo json_encode(["message" => "Author name is either empty or too long"], JSON_PRETTY_PRINT);
         }
     }
 
@@ -137,7 +138,7 @@ class AuthorController {
         if (!empty($id)) {
             if (!is_numeric($id)) {
                 http_response_code(400);
-                echo json_encode(["message" => "Invalid id parameter"]);
+                echo json_encode(["message" => "Invalid id parameter"], JSON_PRETTY_PRINT);
                 return;
             }
     
@@ -145,15 +146,15 @@ class AuthorController {
     
             if ($this->author->delete()) {
                 http_response_code(200);
-                echo json_encode(["id" => $this->author->id, "message" => "Author was deleted"]);
+                echo json_encode(["id" => $this->author->id, "message" => "Author was deleted"], JSON_PRETTY_PRINT);
             } else {
                 error_log("Failed to delete author with ID: " . $id);
                 http_response_code(503);
-                echo json_encode(["message" => "Unable to delete author"]);
+                echo json_encode(["message" => "Unable to delete author"], JSON_PRETTY_PRINT);
             }
         } else {
             http_response_code(400);
-            echo json_encode(["message" => "Unable to delete author. Data is incomplete"]);
+            echo json_encode(["message" => "Unable to delete author. Data is incomplete"], JSON_PRETTY_PRINT);
         }
     }
 }
