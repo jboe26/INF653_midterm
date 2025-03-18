@@ -60,7 +60,7 @@ class QuoteController {
             ]);
         } else {
             http_response_code(404);
-            echo json_encode(["id" => $id, "message" => "No Quote Found."]); // Added id
+            echo json_encode(["message" => "No Quotes Found"]); 
         }
     }
 
@@ -101,7 +101,7 @@ class QuoteController {
 
     public function fetchQuotes() {
         $result = $this->quote->read();
-        $this->processQuoteResults($result, "No Quotes Found.");
+        $this->processQuoteResults($result, "No Quotes Found");
     }
 
     private function handlePost() {
@@ -118,17 +118,17 @@ class QuoteController {
             if ($authorExists && $categoryExists) {
                 if ($this->quote->create()) {
                     http_response_code(201);
-                    echo json_encode(["message" => "Quote was created."]);
+                    echo json_encode(["message" => "Quote was created"]);
                 } else {
-                    error_log("Failed to create quote: " . json_encode($data)); // Better logging
+                    error_log("Failed to create quote: " . json_encode($data)); 
                     http_response_code(503);
-                    echo json_encode(["message" => "Unable to create quote."]);
+                    echo json_encode(["message" => "Unable to create quote"]);
                 }
             } else {
                 http_response_code(400);
                 $message = "";
-                if (!$authorExists) $message .= "author_id Not Found. ";
-                if (!$categoryExists) $message .= "category_id Not Found.";
+                if (!$authorExists) $message .= "author_id Not Found";
+                if (!$categoryExists) $message .= "category_id Not Found";
                 echo json_encode(["message" => $message]);
             }
         } else {
@@ -152,14 +152,14 @@ class QuoteController {
 
             if ($this->quote->update()) {
                 http_response_code(200);
-                echo json_encode(["message" => "Quote was updated."]);
+                echo json_encode(["message" => "Quote was updated"]);
             } else {
                 http_response_code(503);
-                echo json_encode(["message" => "Unable to update quote."]);
+                echo json_encode(["message" => "Unable to update quote"]);
             }
         } else {
             http_response_code(400);
-            echo json_encode(["message" => "Unable to update quote. Data is incomplete."]);
+            echo json_encode(["message" => "Unable to update quote. Data is incomplete"]);
         }
     }
 
@@ -171,14 +171,14 @@ class QuoteController {
     
             if ($this->quote->delete()) {
                 http_response_code(200);
-                echo json_encode(["id" => $this->quote->id, "message" => "Quote was deleted."]);
+                echo json_encode(["id" => $this->quote->id, "message" => "Quote was deleted"]);
             } else {
                 http_response_code(503);
-                echo json_encode(["message" => "Unable to delete quote."]);
+                echo json_encode(["message" => "Unable to delete quote"]);
             }
         } else {
             http_response_code(400);
-            echo json_encode(["message" => "Unable to delete quote. Data is incomplete."]);
+            echo json_encode(["message" => "Unable to delete quote. Data is incomplete"]);
         }
     }
 

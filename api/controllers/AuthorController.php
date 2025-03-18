@@ -51,7 +51,7 @@ class AuthorController {
                 ]);
             } else {
                 http_response_code(404);
-                echo json_encode(["id" => $params['id'], "message" => "Author Not Found."]); // Added id
+                echo json_encode(["message" => "Author Not Found."]);
             }
         } else {
             $stmt = $this->author->read();
@@ -69,7 +69,7 @@ class AuthorController {
                 echo json_encode($authors_arr);
             } else {
                 http_response_code(404);
-                echo json_encode(["message" => "No Authors Found."]);
+                echo json_encode(["message" => "No Authors Found"]);
             }
         }
     }
@@ -85,16 +85,16 @@ class AuthorController {
                 echo json_encode([
                     "id" => $this->author->id,
                     "author" => $this->author->author,
-                    "message" => "Author was created."
+                    "message" => "Author was created"
                 ]);
             } else {
                 error_log("Failed to create author: " . json_encode($data));
                 http_response_code(503);
-                echo json_encode(["message" => "Unable to create author."]);
+                echo json_encode(["message" => "Unable to create author"]);
             }
         } else {
             http_response_code(400);
-            echo json_encode(["message" => "Author name is either empty or too long."]);
+            echo json_encode(["message" => "Author name is either empty or too long"]);
         }
     }
 
@@ -105,7 +105,7 @@ class AuthorController {
         if (!empty($id) && !empty($data->author) && strlen($data->author) <= 255) {
             if (!is_numeric($id)) {
                 http_response_code(400);
-                echo json_encode(["message" => "Invalid id parameter."]);
+                echo json_encode(["message" => "Invalid id parameter"]);
                 return;
             }
     
@@ -117,16 +117,16 @@ class AuthorController {
                 echo json_encode([
                     "id" => $this->author->id,
                     "author" => $this->author->author,
-                    "message" => "Author was updated."
+                    "message" => "Author was updated"
                 ]);
             } else {
                 error_log("Failed to update author with ID: " . $id);
                 http_response_code(503);
-                echo json_encode(["message" => "Unable to update author."]);
+                echo json_encode(["message" => "Unable to update author"]);
             }
         } else {
             http_response_code(400);
-            echo json_encode(["message" => "Author name is either empty or too long."]);
+            echo json_encode(["message" => "Author name is either empty or too long"]);
         }
     }
 
@@ -137,7 +137,7 @@ class AuthorController {
         if (!empty($id)) {
             if (!is_numeric($id)) {
                 http_response_code(400);
-                echo json_encode(["message" => "Invalid id parameter."]);
+                echo json_encode(["message" => "Invalid id parameter"]);
                 return;
             }
     
@@ -145,15 +145,15 @@ class AuthorController {
     
             if ($this->author->delete()) {
                 http_response_code(200);
-                echo json_encode(["id" => $this->author->id, "message" => "Author was deleted."]);
+                echo json_encode(["id" => $this->author->id, "message" => "Author was deleted"]);
             } else {
                 error_log("Failed to delete author with ID: " . $id);
                 http_response_code(503);
-                echo json_encode(["message" => "Unable to delete author."]);
+                echo json_encode(["message" => "Unable to delete author"]);
             }
         } else {
             http_response_code(400);
-            echo json_encode(["message" => "Unable to delete author. Data is incomplete."]);
+            echo json_encode(["message" => "Unable to delete author. Data is incomplete"]);
         }
     }
 }
