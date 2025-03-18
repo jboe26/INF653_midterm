@@ -13,9 +13,6 @@ class AuthorController {
     }
 
     public function handleRequest($method, $params) {
-        $data = ['message' => 'API is working!'];
-        echo json_encode($data);
-        
         switch ($method) {
             case 'GET':
                 $this->handleGet($params);
@@ -30,7 +27,7 @@ class AuthorController {
                 $this->handleDelete();
                 break;
             default:
-                http_response_code(405); // Method Not Allowed
+                http_response_code(405);
                 echo json_encode(['message' => 'Method not allowed.']);
                 exit;
         }
@@ -111,18 +108,18 @@ class AuthorController {
 
     private function handlePut() {
         $data = json_decode(file_get_contents("php://input"));
-        $id = $data->id; 
-    
+        $id = $data->id;
+
         if (!empty($id) && !empty($data->author) && strlen($data->author) <= 255) {
             if (!is_numeric($id)) {
                 http_response_code(400);
                 echo json_encode(["message" => "Invalid id parameter"]);
                 exit;
             }
-    
+
             $this->author->id = htmlspecialchars($id);
             $this->author->author = htmlspecialchars(strip_tags($data->author));
-    
+
             if ($this->author->update()) {
                 http_response_code(200);
                 echo json_encode([
@@ -147,16 +144,16 @@ class AuthorController {
     private function handleDelete() {
         $data = json_decode(file_get_contents("php://input"));
         $id = $data->id;
-    
+
         if (!empty($id)) {
             if (!is_numeric($id)) {
                 http_response_code(400);
                 echo json_encode(["message" => "Invalid id parameter"]);
                 exit;
             }
-    
+
             $this->author->id = htmlspecialchars($id);
-    
+
             if ($this->author->delete()) {
                 http_response_code(200);
                 echo json_encode(["id" => $this->author->id, "message" => "Author was deleted"]);

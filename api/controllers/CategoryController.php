@@ -13,9 +13,6 @@ class CategoryController {
     }
 
     public function handleRequest($method, $params) {
-        $data = ['message' => 'API is working!'];
-        echo json_encode($data);
-        
         switch ($method) {
             case 'GET':
                 $this->handleGet($params);

@@ -13,9 +13,6 @@ class QuoteController {
     }
 
     public function handleRequest($method, $params) {
-        $data = ['message' => 'API is working!'];
-        echo json_encode($data);
-        
         switch ($method) {
             case 'GET':
                 $this->handleGet($params);
@@ -53,7 +50,7 @@ class QuoteController {
     private function getQuoteById($id) {
         $this->quote->id = htmlspecialchars(strip_tags($id));
         $result = $this->quote->read_single();
-    
+
         if ($result) {
             http_response_code(200);
             echo json_encode([
@@ -88,14 +85,14 @@ class QuoteController {
     private function processQuoteResults($result, $errorMessage) {
         $quotes_arr = [];
         while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-            $quotes_arr[] = [
+            $quotes_arr[] = [ // Corrected line: Append to the array
                 "id" => $row["id"],
                 "quote" => $row["quote"],
                 "author" => $row["author"],
                 "category" => $row["category"]
             ];
         }
-
+    
         if (count($quotes_arr) > 0) {
             http_response_code(200);
             echo json_encode($quotes_arr);
@@ -114,22 +111,22 @@ class QuoteController {
 
     private function handlePost() {
         $data = json_decode(file_get_contents("php://input"));
-    
+
         if (!empty($data->quote) && !empty($data->author_id) && !empty($data->category_id)) {
             $this->quote->quote = htmlspecialchars(strip_tags($data->quote));
             $this->quote->author_id = htmlspecialchars(strip_tags($data->author_id));
             $this->quote->category_id = htmlspecialchars(strip_tags($data->category_id));
-    
+
             $authorExists = $this->authorExists($this->quote->author_id);
             $categoryExists = $this->categoryExists($this->quote->category_id);
-    
+
             if ($authorExists && $categoryExists) {
                 if ($this->quote->create()) {
                     http_response_code(201);
                     echo json_encode(["message" => "Quote was created"]);
                     exit;
                 } else {
-                    error_log("Failed to create quote: " . json_encode($data)); 
+                    error_log("Failed to create quote: " . json_encode($data));
                     http_response_code(503);
                     echo json_encode(["message" => "Unable to create quote"]);
                     exit;
@@ -145,9 +142,9 @@ class QuoteController {
         } else {
             http_response_code(400);
             $missingParams = [];
-            if(empty($data->quote)) $missingParams[] = "quote";
-            if(empty($data->author_id)) $missingParams[] = "author_id";
-            if(empty($data->category_id)) $missingParams[] = "category_id";
+            if (empty($data->quote)) $missingParams= "quote";
+            if (empty($data->author_id)) $missingParams= "author_id";
+            if (empty($data->category_id)) $missingParams= "category_id";
             echo json_encode(["message" => "Missing required parameters: " . implode(", ", $missingParams)]);
             exit;
         }
@@ -180,10 +177,10 @@ class QuoteController {
 
     private function handleDelete() {
         $data = json_decode(file_get_contents("php://input"));
-    
+
         if (!empty($data->id)) {
             $this->quote->id = htmlspecialchars(strip_tags($data->id));
-    
+
             if ($this->quote->delete()) {
                 http_response_code(200);
                 echo json_encode(["id" => $this->quote->id, "message" => "Quote was deleted"]);
