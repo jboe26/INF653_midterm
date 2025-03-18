@@ -22,19 +22,9 @@ error_log("REQUEST_URI[1]: " . (isset($request_uri[1]) ? $request_uri[1] : 'Not 
 if ($request_uri[0] === 'api') {
     error_log("API Routing Triggered");
 
-// API Routing Logic
-header('Content-Type: application/json');
 
-// Handle /api/ endpoint with json.
 if (!isset($request_uri[1]) || (isset($request_uri[1]) && empty($request_uri[1]))) {
-    echo json_encode([
-        "message" => "Welcome to the QuoteDB API",
-        "endpoints" => [
-            "/api/quotes",
-            "/api/authors",
-            "/api/categories"
-        ]
-    ]);
+    include 'index.html'; 
     exit;
 }
 
