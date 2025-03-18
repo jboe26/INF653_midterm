@@ -32,24 +32,10 @@
     <h2>INF 653 - Midterm</h2>
 
     <h3>API Endpoints:</h3>
-    <ul id="endpoints-list">
+    <ul>
+        <li><a href="/api/quotes">/api/quotes</a></li>
+        <li><a href="/api/authors">/api/authors</a></li>
+        <li><a href="/api/categories">/api/categories</a></li>
     </ul>
-
-    <script>
-        fetch('/api')
-            .then(response => response.json())
-            .then(data => {
-                const endpointsList = document.getElementById('endpoints-list');
-
-                data.endpoints.forEach(endpoint => {
-                    const listItem = document.createElement('li');
-                    const link = document.createElement('a');
-                    link.href = endpoint;
-                    link.textContent = endpoint;
-                    listItem.appendChild(link);
-                    endpointsList.appendChild(listItem);
-                });
-            });
-    </script>
 </body>
 </html>
