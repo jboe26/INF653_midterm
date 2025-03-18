@@ -28,7 +28,8 @@ class QuoteController {
                 break;
             default:
                 http_response_code(405);
-                echo json_encode(['message' => 'Method not allowed'], JSON_PRETTY_PRINT);
+                echo json_encode(['message' => 'Method not allowed']);
+                exit;
         }
     }
 
@@ -57,10 +58,11 @@ class QuoteController {
                 "quote" => $this->quote->quote,
                 "author" => $this->quote->author,
                 "category" => $this->quote->category
-            ], JSON_PRETTY_PRINT);
+            ]);
+            exit;
         } else {
             http_response_code(404);
-            echo json_encode(["message" => "No Quotes Found"], JSON_PRETTY_PRINT);
+            echo json_encode(["message" => "No Quotes Found"]);
             exit;
         }
     }
@@ -93,10 +95,12 @@ class QuoteController {
 
         if (count($quotes_arr) > 0) {
             http_response_code(200);
-            echo json_encode($quotes_arr, JSON_PRETTY_PRINT);
+            echo json_encode($quotes_arr);
+            exit;
         } else {
             http_response_code(404);
-            echo json_encode(["message" => $errorMessage], JSON_PRETTY_PRINT);
+            echo json_encode(["message" => $errorMessage]);
+            exit;
         }
     }
 
@@ -119,18 +123,21 @@ class QuoteController {
             if ($authorExists && $categoryExists) {
                 if ($this->quote->create()) {
                     http_response_code(201);
-                    echo json_encode(["message" => "Quote was created"], JSON_PRETTY_PRINT);
+                    echo json_encode(["message" => "Quote was created"]);
+                    exit;
                 } else {
-                    error_log("Failed to create quote: " . json_encode($data), JSON_PRETTY_PRINT); 
+                    error_log("Failed to create quote: " . json_encode($data)); 
                     http_response_code(503);
-                    echo json_encode(["message" => "Unable to create quote"], JSON_PRETTY_PRINT);
+                    echo json_encode(["message" => "Unable to create quote"]);
+                    exit;
                 }
             } else {
                 http_response_code(400);
                 $message = "";
                 if (!$authorExists) $message .= "author_id Not Found";
                 if (!$categoryExists) $message .= "category_id Not Found";
-                echo json_encode(["message" => $message], JSON_PRETTY_PRINT);
+                echo json_encode(["message" => $message]);
+                exit;
             }
         } else {
             http_response_code(400);
@@ -138,7 +145,8 @@ class QuoteController {
             if(empty($data->quote)) $missingParams[] = "quote";
             if(empty($data->author_id)) $missingParams[] = "author_id";
             if(empty($data->category_id)) $missingParams[] = "category_id";
-            echo json_encode(["message" => "Missing required parameters: " . implode(", ", $missingParams)], JSON_PRETTY_PRINT);
+            echo json_encode(["message" => "Missing required parameters: " . implode(", ", $missingParams)]);
+            exit;
         }
     }
 
@@ -153,14 +161,17 @@ class QuoteController {
 
             if ($this->quote->update()) {
                 http_response_code(200);
-                echo json_encode(["message" => "Quote was updated"], JSON_PRETTY_PRINT);
+                echo json_encode(["message" => "Quote was updated"]);
+                exit;
             } else {
                 http_response_code(503);
-                echo json_encode(["message" => "Unable to update quote"], JSON_PRETTY_PRINT);
+                echo json_encode(["message" => "Unable to update quote"]);
+                exit;
             }
         } else {
             http_response_code(400);
-            echo json_encode(["message" => "Unable to update quote. Data is incomplete"], JSON_PRETTY_PRINT);
+            echo json_encode(["message" => "Unable to update quote. Data is incomplete"]);
+            exit;
         }
     }
 
@@ -172,14 +183,17 @@ class QuoteController {
     
             if ($this->quote->delete()) {
                 http_response_code(200);
-                echo json_encode(["id" => $this->quote->id, "message" => "Quote was deleted"], JSON_PRETTY_PRINT);
+                echo json_encode(["id" => $this->quote->id, "message" => "Quote was deleted"]);
+                exit;
             } else {
                 http_response_code(503);
-                echo json_encode(["message" => "Unable to delete quote"], JSON_PRETTY_PRINT);
+                echo json_encode(["message" => "Unable to delete quote"]);
+                exit;
             }
         } else {
             http_response_code(400);
-            echo json_encode(["message" => "Unable to delete quote. Data is incomplete"], JSON_PRETTY_PRINT);
+            echo json_encode(["message" => "Unable to delete quote. Data is incomplete"]);
+            exit;
         }
     }
 
