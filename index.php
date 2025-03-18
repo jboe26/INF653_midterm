@@ -9,6 +9,10 @@ if ($method === 'OPTIONS') {
     exit();
 }
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 error_log("SERVER REQUEST URI: " . $_SERVER['REQUEST_URI']);
 
 $request_uri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
