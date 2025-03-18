@@ -1,6 +1,7 @@
 <?php
 // CORS Headers
 header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json'); // Add content type header
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'OPTIONS') {
@@ -25,11 +26,41 @@ error_log("REQUEST_URI[1]: " . (isset($request_uri[1]) ? $request_uri[1] : 'Not 
 if ($request_uri[0] === 'api') {
     error_log("API Routing Triggered");
 
-    if (!isset($request_uri[1]) || (isset($request_uri[1]) && empty($request_uri[1]))) {
-        include 'index.html'; 
-        exit;
+    if (isset($request_uri[1]) && !empty($request_uri[1])) {
+        $endpoint = $request_uri[1]; // Get the endpoint (quotes, authors, categories)
+        error_log("API Endpoint: " . $endpoint);
+
+        include_once __DIR__ . '/classes/Database.php';
+        $db = new Database();
+        $conn = $db->connect();
+
+        switch ($endpoint) {
+            case 'authors':
+                include_once __DIR__ . '/controllers/AuthorController.php';
+                $controller = new AuthorController($conn);
+                break;
+            case 'categories':
+                include_once __DIR__ . '/controllers/CategoryController.php';
+                $controller = new CategoryController($conn);
+                break;
+            case 'quotes':
+                include_once __DIR__ . '/controllers/QuoteController.php';
+                $controller = new QuoteController($conn);
+                break;
+            default:
+                http_response_code(404);
+                echo json_encode(['message' => 'Endpoint not found']);
+                exit;
+        }
+
+        $controller->handleRequest($method, $_GET, file_get_contents('php://input')); 
+
+    } else {
+        http_response_code(400);
+        echo json_encode(['message' => 'Endpoint not specified']);
     }
 } else {
-    include 'index.html';
+    http_response_code(404);
+    echo json_encode(['message' => 'Not found']);
 }
 ?>
