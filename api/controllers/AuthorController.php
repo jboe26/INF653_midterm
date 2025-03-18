@@ -100,7 +100,7 @@ class AuthorController {
 
     private function handlePut() {
         $data = json_decode(file_get_contents("php://input"));
-        $id = $_GET['id']; // Get id from query parameter.
+        $id = $data->id; 
     
         if (!empty($id) && !empty($data->author) && strlen($data->author) <= 255) {
             if (!is_numeric($id)) {
@@ -131,7 +131,8 @@ class AuthorController {
     }
 
     private function handleDelete() {
-        $id = $_GET['id']; // Get id from query parameter.
+        $data = json_decode(file_get_contents("php://input"));
+        $id = $data->id;
     
         if (!empty($id)) {
             if (!is_numeric($id)) {

@@ -100,6 +100,7 @@ class CategoryController {
 
     private function handlePut() {
         $data = json_decode(file_get_contents("php://input"));
+        $id = $data->id;
 
         if (!empty($data->id) && !empty($data->category) && strlen($data->category) <= 255) {
             if (!is_numeric($data->id)) {
