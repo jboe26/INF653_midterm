@@ -3,7 +3,7 @@
 
 ### ### This RESTful API manages quotes, authors, and categories using PHP and PostgreSQL.
 
-### ### Deployed Project: [\[My Deployed Project Link\]](https://quotedb-api.onrender.com/)
+### ### Deployed Project: [\[My Deployed Project Link\]](https://inf653-midterm-project-5bc6.onrender.com/api)
 
 ### ### API Overview
 
@@ -41,10 +41,7 @@ PUT /categories - Update an existing category.
 DELETE /categories - Remove a category.
 
 ### Database
-Powered by PostgreSQL for secure data storage and relational management.
-
-### Usage
-Interact with the API using tools like Postman or curl to send requests and view responses.
+Powered by PostgreSQL and hosted on Render.
 
 ### Error Handling
 API responses include clear HTTP status codes and JSON error messages for invalid inputs or requests.
